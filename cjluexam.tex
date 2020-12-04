@@ -1,0 +1,180 @@
+% !TeX program = xelatex
+\documentclass[oneside,AutoFakeBold=2.85]{article}
+% 文档选项 twoside 适用于双面打印
+
+% Options --------------------------------------------------------
+\def\Year{2020～2021}       % 学年
+\def\Semester{1}            % 学期
+\def\Course{$\times\times$} % 科目
+\def\Type{A}                % 试卷类型
+\def\School{$\times\times$} % 开课学院
+\newif\ifopen\openfalse     % 是否开卷, opentrue/openfalse
+\def\Thing{}                % 可带入场的物品
+\def\Num{6}                 % 大题数目
+
+% Macro ----------------------------------------------------------
+\newcommand{\blank}[1][4em]{\underline{\hspace{#1}}}
+\newcommand{\ufill}[2]{\underline{\makebox[#1][c]{#2}}}
+
+% Layout ---------------------------------------------------------
+\usepackage[a4paper,margin=30mm,footskip=6mm]{geometry}
+
+% Font -----------------------------------------------------------
+\usepackage[no-math]{fontspec}
+\usepackage[zihao=5,heading]{ctex}
+%\setmainfont{Times New Roman}
+%\setsansfont{Arial}
+%\setCJKsansfont{SimHei}
+%\let\fangsong\relax
+%\newCJKfontfamily\fangsong{FZFangSong-Z02}
+
+% Title ----------------------------------------------------------
+% 重定义 \maketitle 命令输出标题、考生相关信息、得分栏等
+\usepackage{tabularx,makecell,interfaces-makecell,graphicx,tikz}
+\renewcommand{\maketitle}{\bgroup
+  \parindent0pt\linespread{1.5}\zihao{-4}\setlength{\fboxsep}{-0.4pt}%
+  \begin{center}
+    \zihao{4}\bfseries\fangsong
+    中国计量大学 \Year 学年第 \Semester 学期\\
+    《\Course》课程考试试卷（\Type）
+  \end{center}%
+  开课二级学院：\ufill{9em}{\School}，
+  考试时间：\blank[3em]年\blank[2em]月\blank[2em]日\blank[2em]时\\
+  考试形式：
+  \ifopen
+    闭卷 \fbox{\rule[0.683em]{0.683em}{0em}}、
+    开卷 \rule{0.683em}{0.683em}，
+  \else
+    闭卷 \rule{0.683em}{0.683em}、
+    开卷 \fbox{\rule[0.683em]{0.683em}{0em}}，
+  \fi
+  允许带\ufill{17em}{\Thing}入场\\
+  考生姓名：\blank[5.2em]
+  学号：\blank[5.2em]
+  专业：\blank[5.2em]
+  班级：\blank[5.2em]\par\smallskip
+  \begin{tabularx}{\textwidth}{|*{\numexpr\Num+2}{>{\hfil}X|}}
+    \hline
+    题序   & \repeatcell{\Num}{text=\zhnumber{\column}} & 总分 \\\hline
+    得分   & \repeatcell{\Num}{}                        &      \\\hline
+    评卷人 & \repeatcell{\Num}{}                        &      \\\hline
+  \end{tabularx}%
+\egroup}
+
+% 座位号
+\newcommand\Seat{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \zihao{-4}
+    \matrix[nodes={draw,inner ysep=8pt}]
+    at ([shift={(15mm,-25mm)}]current page.north west)
+    {\node{座位号};\\ \node{\phantom{座位号}};\\};
+%    \node[rectangle split, rectangle split parts=2, draw, inner ysep=8pt]
+%      {\zihao{-4}座位号\nodepart{two}{\phantom{座位号}}};
+  \end{tikzpicture}%
+}
+
+% 装订线, 参数为 -1 时装订线在左侧, 参数为 1 时在右侧
+\newcommand\Binding[1][-1]{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \zihao{5}
+    \node[text width=\textheight,rotate=-90,yshift=.5*#1*\textwidth+#1*.5cm]
+      at (current page.center)
+      {\sffamily\dotfill
+        \raisebox{-.45em}{ \rotatebox{90}{装} }\dotfill
+        \raisebox{-.45em}{ \rotatebox{90}{订} }\dotfill
+        \raisebox{-.45em}{ \rotatebox{90}{线} }\dotfill};
+  \end{tikzpicture}%
+}
+% 设置装订线, 双面时在 1,4 页, 单面时在奇数页
+\makeatletter
+\if@twoside
+  \newcommand\Bind{%
+    \ifcase\numexpr\value{page}-((\value{page}-2)/4)*4\relax
+      \Binding[1]\or\Binding\relax
+    \fi
+  }
+\else
+  \newcommand\Bind{\ifodd\value{page}\relax\Binding\fi}
+\fi
+\makeatother
+
+% Footer ---------------------------------------------------------
+\usepackage{titleps,lastpage}
+\newpagestyle{main}[\zihao{-5}]{\footrule
+  \setfoot{}{\Bind\fangsong
+    中国计量大学 \Year 学年 \Semester 学期
+    《\Course》课程考试试卷（\Type）
+    第 \thepage 页~共 \pageref{LastPage} 页}{}}
+\pagestyle{main}
+
+% Others ---------------------------------------------------------
+\ctexset{section={
+  name={,、},
+  number=\chinese{section},
+  format=\sffamily,
+  aftername={},
+  aftertitle={},
+  beforeskip=2ex plus .5ex minus .5ex,
+  afterskip=1ex plus .5ex minus .5ex,
+%  runin=true,
+}}
+
+% tasks 宏包用于排版选择题的选项列表
+\usepackage{enumitem}
+\setlist{leftmargin=*}
+\usepackage{tasks}
+\settasks{label=(\Alph*),label-width={1.6em},label-offset={.2em}}
+
+\usepackage{amsmath}
+\newcommand{\abs}[1]{\left\vert#1\right\vert}
+\newcommand{\dif}{\mathop{}\!\mathrm{d}}
+\newcommand{\vard}{\dif}
+\newcommand{\vare}{\mathrm{e}}
+\newcommand{\vari}{\mathbf{i}}
+
+% ----------------------------------------------------------------
+\begin{document}
+
+\maketitle
+
+\section{单项选择题（每小题3分，共15分）}
+
+\begin{enumerate}
+  \item
+    请选择\blank.
+    \begin{tasks}(2)
+      \task 选项
+      \task 选项
+      \task 选项
+      \task 选项
+    \end{tasks}
+\end{enumerate}
+
+\clearpage
+
+\section{填空题（每小题3分，共15分）}
+
+\begin{enumerate}
+  \item
+    请填空\blank[8em].
+\end{enumerate}
+
+\clearpage
+
+\section{解答题（每小题10分，共40分）}
+
+\begin{enumerate}
+  \item
+    请解答
+\end{enumerate}
+
+\clearpage
+
+\section{应用题（每小题10分，共30分）}
+
+\begin{enumerate}
+  \item
+    请解答
+\end{enumerate}
+
+\end{document}
