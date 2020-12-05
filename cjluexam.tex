@@ -10,7 +10,7 @@
 \def\School{$\times\times$} % 开课学院
 \newif\ifopen\openfalse     % 是否开卷, opentrue/openfalse
 \def\Thing{}                % 可带入场的物品
-\def\Num{6}                 % 大题数目
+\def\Num{6}                 % 题目数, 不要超过 10
 
 % Macro ----------------------------------------------------------
 \newcommand{\blank}[1][4em]{\underline{\hspace{#1}}}
@@ -53,12 +53,30 @@
   学号：\blank[5.2em]
   专业：\blank[5.2em]
   班级：\blank[5.2em]\par\smallskip
-  \begin{tabularx}{\textwidth}{|*{\numexpr\Num+2}{>{\hfil}X|}}
-    \hline
-    题序   & \repeatcell{\Num}{text=\zhnumber{\column}} & 总分 \\\hline
-    得分   & \repeatcell{\Num}{}                        &      \\\hline
-    评卷人 & \repeatcell{\Num}{}                        &      \\\hline
-  \end{tabularx}%
+  \ifnum \Num<7
+    \begin{tabularx}{\textwidth}{|*{\numexpr\Num+2}{>{\hfil}X|}}
+      \hline
+      题序   & \repeatcell{\Num}{text=\zhnumber{\column}} & 总分 \\\hline
+      得分   & \repeatcell{\Num}{}                        &      \\\hline
+      评卷人 & \repeatcell{\Num}{}                        &      \\\hline
+    \end{tabularx}%
+  \else
+    \ifnum \Num<10
+      \begin{tabularx}{\textwidth}{|c|*{\numexpr\Num+1}{>{\hfil}X|}}
+        \hline
+        题序   & \repeatcell{\Num}{text=\zhnumber{\column}} & 总分 \\\hline
+        得分   & \repeatcell{\Num}{}                        &      \\\hline
+        评卷人 & \repeatcell{\Num}{}                        &      \\\hline
+      \end{tabularx}%
+    \else
+      \begin{tabularx}{\textwidth}{|c|*{\numexpr\Num}{>{\hfil}X|}c|}
+        \hline
+        题序   & \repeatcell{\Num}{text=\zhnumber{\column}} & 总分 \\\hline
+        得分   & \repeatcell{\Num}{}                        &      \\\hline
+        评卷人 & \repeatcell{\Num}{}                        &      \\\hline
+      \end{tabularx}%
+    \fi
+  \fi
 \egroup}
 
 % 座位号
