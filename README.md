@@ -1,6 +1,6 @@
 # CJLU Exam Template
 
-一份试卷和参考答案模板的 LaTeX 模板.
+中国计量大学期末考试试卷和参考答案模板的 LaTeX 模板.
 
 ### 说明
 
