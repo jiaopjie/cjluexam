@@ -10,7 +10,8 @@
 \def\School{$\times\times$} % 开课学院
 \newif\ifopen\openfalse     % 是否开卷, opentrue/openfalse
 \def\Thing{}                % 可带入场的物品
-\def\Num{4}                 % 题目数, 不要超过 10
+\newcounter{Num}            % 题目数, 用于调整得分栏列数, 不要超过 10
+\setcounter{Num}{1}         % 初始值, 使用 section 时可自动修正
 
 % Macro ----------------------------------------------------------
 \newcommand{\blank}[1][4em]{\underline{\hspace{#1}}}
@@ -30,7 +31,8 @@
 
 % Title ----------------------------------------------------------
 % 重定义 \maketitle 命令输出标题、考生相关信息、得分栏等
-\usepackage{tabularx,makecell,interfaces-makecell,graphicx,tikz}
+\usepackage{tabularx,makecell,interfaces-makecell,totcount}
+\regtotcounter{section}
 \renewcommand{\maketitle}{\bgroup
   \parindent0pt\linespread{1.5}\zihao{-4}\setlength{\fboxsep}{-0.4pt}%
   \begin{center}
@@ -53,32 +55,88 @@
   学号：\blank[5.2em]
   专业：\blank[5.2em]
   班级：\blank[5.2em]\par\smallskip
-  \ifnum \Num<7
-    \begin{tabularx}{\textwidth}{|*{\numexpr\Num+2}{>{\hfil}X|}}
+  \ifnum \totvalue{section}>0
+    \setcounter{Num}{\totvalue{section}}%
+  \fi
+  \ifnum \theNum<7
+    \begin{tabularx}{\textwidth}{|*{\numexpr\theNum+2}{>{\hfil}X|}}
       \hline
-      题序   & \repeatcell{\Num}{text=\zhnumber{\column}} & 总分 \\\hline
-      得分   & \repeatcell{\Num}{}                        &      \\\hline
-      评卷人 & \repeatcell{\Num}{}                        &      \\\hline
+      题序   & \repeatcell{\theNum}{text=\zhnumber{\column}} & 总分 \\\hline
+      得分   & \repeatcell{\theNum}{}                        &      \\\hline
+      评卷人 & \repeatcell{\theNum}{}                        &      \\\hline
     \end{tabularx}%
   \else
-    \ifnum \Num<10
-      \begin{tabularx}{\textwidth}{|c|*{\numexpr\Num+1}{>{\hfil}X|}}
+    \ifnum \theNum<10
+      \begin{tabularx}{\textwidth}{|c|*{\numexpr\theNum+1}{>{\hfil}X|}}
         \hline
-        题序   & \repeatcell{\Num}{text=\zhnumber{\column}} & 总分 \\\hline
-        得分   & \repeatcell{\Num}{}                        &      \\\hline
-        评卷人 & \repeatcell{\Num}{}                        &      \\\hline
+        题序   & \repeatcell{\theNum}{text=\zhnumber{\column}} & 总分 \\\hline
+        得分   & \repeatcell{\theNum}{}                        &      \\\hline
+        评卷人 & \repeatcell{\theNum}{}                        &      \\\hline
       \end{tabularx}%
     \else
-      \begin{tabularx}{\textwidth}{|c|*{\numexpr\Num}{>{\hfil}X|}c|}
+      \begin{tabularx}{\textwidth}{|c|*{\numexpr\theNum}{>{\hfil}X|}c|}
         \hline
-        题序   & \repeatcell{\Num}{text=\zhnumber{\column}} & 总分 \\\hline
-        得分   & \repeatcell{\Num}{}                        &      \\\hline
-        评卷人 & \repeatcell{\Num}{}                        &      \\\hline
+        题序   & \repeatcell{\theNum}{text=\zhnumber{\column}} & 总分 \\\hline
+        得分   & \repeatcell{\theNum}{}                        &      \\\hline
+        评卷人 & \repeatcell{\theNum}{}                        &      \\\hline
       \end{tabularx}%
     \fi
   \fi
 \egroup}
 
+% Binding Line ---------------------------------------------------
+% 设置装订线, twoside 时在 1,4 页, oneside 时在奇数页
+\makeatletter
+\if@twoside
+  \newcommand\Bind{%
+    \ifcase\numexpr\value{page}-((\value{page}-2)/4)*4\relax
+      \Binding[1]\or\Binding\relax
+    \fi
+  }
+\else
+  \newcommand\Bind{\ifodd\value{page}\relax\Binding\fi}
+\fi
+\makeatother
+% 绘制装订线, 参数为 -1 时装订线在左侧, 参数为 1 时在右侧
+\usepackage{graphicx,tikz}
+\newcommand\Binding[1][-1]{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \zihao{5}
+    \node[text width=\textheight,rotate=-90,yshift=.5*#1*\textwidth+#1*.5cm]
+      at (current page.center)
+      {\sffamily\dotfill
+        \raisebox{-.45em}{ \rotatebox{90}{装} }\dotfill
+        \raisebox{-.45em}{ \rotatebox{90}{订} }\dotfill
+        \raisebox{-.45em}{ \rotatebox{90}{线} }\dotfill
+      };
+  \end{tikzpicture}%
+}
+
+% Section Title --------------------------------------------------
+% 建议使用 section 输入大题的标题
+% runin 为 true 时, 标题后不换行, 直接排版后续内容
+\ctexset{section={
+  name={,、},
+  number=\chinese{section},
+  format=\sffamily,
+  aftername={},
+  aftertitle={},
+  beforeskip=2ex plus .5ex minus .5ex,
+  afterskip=1ex plus .5ex minus .5ex,
+%  runin=true,
+}}
+
+% Footer ---------------------------------------------------------
+\usepackage{titleps}
+\regtotcounter{page}
+\newpagestyle{main}[\zihao{-5}]{\footrule
+  \setfoot{}{\Bind\fangsong
+    中国计量大学 \Year 学年 \Semester 学期
+    《\Course》课程考试试卷（\Type）
+    第 \thepage 页~共 \total{page} 页}{}}
+\pagestyle{main}
+
+% Others ---------------------------------------------------------
 % 座位号
 \newcommand\Seat{%
   \begin{tikzpicture}[remember picture,overlay]
@@ -91,57 +149,15 @@
   \end{tikzpicture}%
 }
 
-% 装订线, 参数为 -1 时装订线在左侧, 参数为 1 时在右侧
-\newcommand\Binding[1][-1]{%
-  \begin{tikzpicture}[remember picture,overlay]
-    \zihao{5}
-    \node[text width=\textheight,rotate=-90,yshift=.5*#1*\textwidth+#1*.5cm]
-      at (current page.center)
-      {\sffamily\dotfill
-        \raisebox{-.45em}{ \rotatebox{90}{装} }\dotfill
-        \raisebox{-.45em}{ \rotatebox{90}{订} }\dotfill
-        \raisebox{-.45em}{ \rotatebox{90}{线} }\dotfill};
-  \end{tikzpicture}%
-}
-% 设置装订线, 双面时在 1,4 页, 单面时在奇数页
-\makeatletter
-\if@twoside
-  \newcommand\Bind{%
-    \ifcase\numexpr\value{page}-((\value{page}-2)/4)*4\relax
-      \Binding[1]\or\Binding\relax
-    \fi
-  }
-\else
-  \newcommand\Bind{\ifodd\value{page}\relax\Binding\fi}
-\fi
-\makeatother
-
-% Footer ---------------------------------------------------------
-\usepackage{titleps,lastpage}
-\newpagestyle{main}[\zihao{-5}]{\footrule
-  \setfoot{}{\Bind\fangsong
-    中国计量大学 \Year 学年 \Semester 学期
-    《\Course》课程考试试卷（\Type）
-    第 \thepage 页~共 \pageref{LastPage} 页}{}}
-\pagestyle{main}
-
-% Others ---------------------------------------------------------
-\ctexset{section={
-  name={,、},
-  number=\chinese{section},
-  format=\sffamily,
-  aftername={},
-  aftertitle={},
-  beforeskip=2ex plus .5ex minus .5ex,
-  afterskip=1ex plus .5ex minus .5ex,
-%  runin=true,
-}}
-
-% tasks 宏包用于排版选择题的选项列表
+% tasks 宏包用于排版每行多项的列表
 \usepackage{enumitem}
 \setlist{leftmargin=*}
 \usepackage{tasks}
-\settasks{label=(\Alph*),label-width={1.6em},label-offset={.2em}}
+\settasks{label=(\Alph*),label-width={1.6em},label-offset={.2em},after-item-skip=0pt}
+
+% 两行之间的最小空白
+\setlength\lineskiplimit{.3em}
+\setlength\lineskip{.3em}
 
 \usepackage{amsmath}
 \newcommand{\abs}[1]{\left\vert#1\right\vert}
@@ -157,7 +173,39 @@
 
 \section{单项选择题（每小题3分，共15分）}
 
-\begin{enumerate}
+\begin{enumerate}[itemsep=1em]
+  \item
+    请选择\blank.
+    \begin{tasks}(2)
+      \task 选项
+      \task 选项
+      \task 选项
+      \task 选项
+    \end{tasks}
+  \item
+    请选择\blank.
+    \begin{tasks}(2)
+      \task 选项
+      \task 选项
+      \task 选项
+      \task 选项
+    \end{tasks}
+  \item
+    请选择\blank.
+    \begin{tasks}(2)
+      \task 选项
+      \task 选项
+      \task 选项
+      \task 选项
+    \end{tasks}
+  \item
+    请选择\blank.
+    \begin{tasks}(2)
+      \task 选项
+      \task 选项
+      \task 选项
+      \task 选项
+    \end{tasks}
   \item
     请选择\blank.
     \begin{tasks}(2)
@@ -175,24 +223,53 @@
 \begin{enumerate}
   \item
     请填空\blank[8em].
+  \item
+    请填空\blank[8em].
+  \item
+    请填空\blank[8em].
+  \item
+    请填空\blank[8em].
+  \item
+    请填空\blank[8em].
+\end{enumerate}
+
+\section{计算题（每小题10分，共20分）}
+
+\begin{enumerate}
+  \item
+    请计算
+    \vspace{8cm}
+  \item
+    请计算
 \end{enumerate}
 
 \clearpage
 
-\section{解答题（每小题10分，共40分）}
+\section{解答题（每小题10分，共30分）}
 
 \begin{enumerate}
   \item
     请解答
+    \vfill
+  \item
+    请解答
+    \vfill
+  \item
+    请解答
+    \vfill
 \end{enumerate}
 
 \clearpage
 
-\section{应用题（每小题10分，共30分）}
+\section{应用题（每小题10分，共20分）}
 
 \begin{enumerate}
   \item
     请解答
+    \vfill
+  \item
+    请解答
+    \vfill
 \end{enumerate}
 
 \end{document}

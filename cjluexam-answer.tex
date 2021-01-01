@@ -37,6 +37,20 @@
   教师：\underline{\makebox[6em][c]{\Teacher}}
 \egroup}
 
+% Section Title --------------------------------------------------
+% 建议使用 section 输入大题的标题
+% runin 为 true 时, 标题后不换行, 直接排版后续内容
+\ctexset{section={
+  name={,、},
+  number=\chinese{section},
+  format=\sffamily,
+  aftername={},
+  aftertitle={},
+  beforeskip=2ex plus .5ex minus .5ex,
+  afterskip=1ex plus .5ex minus .5ex,
+%  runin=true,
+}}
+
 % Footer ---------------------------------------------------------
 \usepackage{titleps,lastpage}
 \newpagestyle{main}[\zihao{-5}]{\footrule
@@ -46,21 +60,16 @@
 \pagestyle{main}
 
 % Others ---------------------------------------------------------
-\ctexset{section={
-  name={,、},
-  number=\chinese{section},
-  format={},
-  aftername={},
-  aftertitle={},
-  beforeskip=2ex plus .5ex minus .5ex,
-  afterskip=1ex plus .5ex minus .5ex,
-%  runin=true,
-}}
-
+% tasks 宏包用于排版每行多项的列表
 \usepackage{enumitem}
 \setlist{nosep,leftmargin=*}
 \usepackage{tasks}
-\settasks{label=\arabic*.}
+\settasks{label=\arabic*.,after-item-skip=0pt}
+
+% 两行之间的最小空白
+\setlength\lineskiplimit{.3em}
+\setlength\lineskip{.3em}
+\parindent0pt
 
 \usepackage{amsmath}
 \newcommand{\abs}[1]{\left\vert#1\right\vert}
@@ -94,15 +103,29 @@
   \task 答案
 \end{tasks}
 
-\section{解答题（每小题10分，共40分）}
+\section{计算题（每小题10分，共20分）}
 
 \begin{enumerate}
   \item 解:
+    由题意可得 $\displaystyle a=\frac12$.
+    \dotfill ($+1$分)\\
+    而 $\displaystyle b=\frac23$.
+    \dotfill ($+1$分)
+  \item 解:
 \end{enumerate}
 
-\section{应用题（每小题10分，共30分）}
+\section{解答题（每小题10分，共30分）}
 
 \begin{enumerate}
+  \item 解:
+  \item 解:
+  \item 解:
+\end{enumerate}
+
+\section{应用题（每小题10分，共20分）}
+
+\begin{enumerate}
+  \item 解:
   \item 解:
 \end{enumerate}
 
