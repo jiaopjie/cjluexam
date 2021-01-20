@@ -9,9 +9,10 @@
 \def\Type{A}                % 试卷类型
 \def\School{$\times\times$} % 开课学院
 \newif\ifopen\openfalse     % 是否开卷, opentrue/openfalse
+\newif\ifseat\seatfalse     % 是否打印座位号, seattrue/seatfalse
 \def\Thing{}                % 可带入场的物品
 \newcounter{Num}            % 题目数, 用于调整得分栏列数, 不要超过 10
-\setcounter{Num}{1}         % 初始值, 使用 section 时可自动修正
+\setcounter{Num}{6}         % 初始值, 使用 section 时可自动修正
 
 % Macro ----------------------------------------------------------
 \newcommand{\blank}[1][4em]{\underline{\hspace{#1}}}
@@ -36,7 +37,7 @@
 \renewcommand{\maketitle}{\bgroup
   \parindent0pt\linespread{1.5}\zihao{-4}\setlength{\fboxsep}{-0.4pt}%
   \begin{center}
-    \zihao{4}\bfseries\fangsong
+    \ifseat\Seat\fi\zihao{4}\bfseries\fangsong
     中国计量大学 \Year 学年第 \Semester 学期\\
     《\Course》课程考试试卷（\Type）
   \end{center}%
@@ -137,13 +138,13 @@
 \pagestyle{main}
 
 % Others ---------------------------------------------------------
-% 座位号
+% 座位号, 下面的坐标以页面左上角为原点
 \newcommand\Seat{%
-  \begin{tikzpicture}[remember picture,overlay]
+  \begin{tikzpicture}[remember picture,overlay,ampersand replacement=\&]
     \zihao{-4}
     \matrix[nodes={draw,inner ysep=8pt}]
-    at ([shift={(15mm,-25mm)}]current page.north west)
-    {\node{座位号};\\ \node{\phantom{座位号}};\\};
+    at ([shift={(25mm,-25mm)}]current page.north west)
+    {\node{\phantom{座位号}}; \& \node{座位号};\\};
 %    \node[rectangle split, rectangle split parts=2, draw, inner ysep=8pt]
 %      {\zihao{-4}座位号\nodepart{two}{\phantom{座位号}}};
   \end{tikzpicture}%
