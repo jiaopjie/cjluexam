@@ -20,7 +20,7 @@
 \iffalse
 %</internal>
 %<*readme>
-# 中国计量大学期末试卷 LaTeX 模板
+# 中国计量大学试卷 LaTeX 模板
 
 * 本项目参照 Word 模板设计
 
@@ -179,13 +179,12 @@ LaTeX version 2005/12/01 or later.
 %
 % \section{简介}
 %
-% \cls{\jobname} 是用于排版中国计量大学期末考试试卷的 \LaTeX{} 模板.
-% 模板参照《中国计量大学试卷格式》
+% \cls{\jobname} 是中国计量大学试卷的 \LaTeX{} 模板.
+% 本模板按照《中国计量大学试卷格式》
 % \footnote{\url{http://jwc.cjlu.edu.cn/info/1179/4240.htm}}
 % 和《中国计量大学试卷参考答案及评分标准》
 % \footnote{\url{http://jwc.cjlu.edu.cn/info/1179/4241.htm}}
-% 给出的 Word 模板编写.
-%
+% 及给出的 Word 模板编写.
 % 模板下载地址如下.
 % \begin{itemize}
 %   \item \url{https://github.com/jiaopjie/cjluexam}
@@ -196,7 +195,7 @@ LaTeX version 2005/12/01 or later.
 %
 % \subsection{模板结构}
 %
-% 本模板主要由以下文件组成.
+% 本模板包含以下文件.
 %
 % \begin{center}
 %   \begin{tabular}{lll}
@@ -204,18 +203,20 @@ LaTeX version 2005/12/01 or later.
 %     类别     & 文件           & 备注\\
 %     \midrule
 %     模板文件 & \file{\jobname.dtx} & 模板代码文件 (普通用户无需使用)\\
-%              & \file{cjluexam.cls} & 文档类文件\\
-%              & \file{cjluexam.ins} & 模板安装文件\\
-%              & \file{cjluexam.pdf} & 模板说明\\
+%              & \file{\jobname.cls} & 文档类文件\\
+%              & \file{\jobname.ins} & 模板安装文件\\
+%              & \file{\jobname.pdf} & 模板说明\\
 %              & \file{README.md}    & 简要文本说明\\
 %     \midrule
-%     示例文档 & \file{exam.tex}     & 试卷\\
-%              & \file{answer.tex}   & 参考答案及评分标准\\
+%     示例文档 & \file{exam.tex}     & 试卷源文件\\
+%              & \file{exam.pdf}     & 试卷\\
+%              & \file{answer.tex}   & 参考答案及评分标准源文件\\
+%              & \file{answer.pdf}   & 参考答案及评分标准\\
 %     \bottomrule
 %   \end{tabular}
 % \end{center}
 %
-% 其中, 文件 \file{cjluexam.dtx} 包含的是模板的原始代码.
+% 其中, 文件 \file{\jobname.dtx} 包含的是模板的原始代码.
 % 该文件经过编译可以生成其他模板文件.
 % 源代码文件仅用于模板维护和了解模板编写细节, 普通用户不必理会.
 %
@@ -242,7 +243,7 @@ LaTeX version 2005/12/01 or later.
 %
 % 得到装订线、座位号的正确位置需要多次编译.
 %
-% \section{模板简介}
+% \section{说明}
 %
 % \subsection{文档选项}
 %
