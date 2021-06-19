@@ -29,21 +29,20 @@
 \PassOptionsToPackage{no-math}{fontspec}
 \RequirePackage[heading,zihao=5]{ctex}[2014/03/06]
 \RequirePackage[a4paper,margin=30mm,footskip=6mm]{geometry}
-\RequirePackage{titleps,totcount}
-\regtotcounter{page}
+\RequirePackage{titleps,lastpage}
 \ifanswer
   \newpagestyle{main}[\zihao{-5}]{%
     \footrule
     \setfoot{}{\fangsong
       《\Course》课程试卷（\Type）参考答案及评分标准\quad
-      第 \thepage 页~共 \total{page} 页}{}}
+      第 \thepage 页~共 \pageref{LastPage} 页}{}}
 \else
   \newpagestyle{main}[\zihao{-5}]{%
     \footrule
     \setfoot{}{\cjluexam@setbinding\fangsong
       中国计量大学 \AcademicYear 学年 \Semester 学期
       《\Course》课程考试试卷（\Type）
-      第 \thepage 页~共 \total{page} 页}{}}
+      第 \thepage 页~共 \pageref{LastPage} 页}{}}
 \fi
 \pagestyle{main}
 \if@twoside
