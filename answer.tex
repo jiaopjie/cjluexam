@@ -1,22 +1,21 @@
 % !TeX program = xelatex
 \documentclass[answer,AutoFakeBold=2.85]{cjluexam}
 
-% Options --------------------------------------------------------
+% Information ----------------------------------------------------
 \def\AcademicYear{2020～2021} % 学年
-\def\Semester{1}              % 学期
+\def\Term{1}                  % 学期
 \def\Course{高等数学}         % 科目
 \def\Type{A}                  % 试卷类型
 \def\School{理学院}           % 开课学院
 %\def\Class{}                  % 学生班级
 %\def\Teacher{}                % 教师
 
-% Others ---------------------------------------------------------
-%\setCJKsansfont{SimHei}
-%\ctexset{\section/runin=false}
-\usepackage{enumitem}
-\setlist{leftmargin=*}
-\usepackage{tasks}      % tasks 宏包用于排版每行多项的列表
-\settasks{label=\arabic*.,label-width=1em,label-offset=.2em,item-indent=1.2em,after-item-skip=0pt}
+% Custom ---------------------------------------------------------
+%\ctexset{section/runin=false} % 题目标题后换行
+\usepackage{enumitem,tasks}
+\setlist{nosep,leftmargin=*}
+\settasks{label=\arabic*.,label-width=1em,label-offset=.2em,item-indent=1.2em}
+\settasks{before-skip=0pt,after-skip=0pt,after-item-skip=0pt}
 
 % ----------------------------------------------------------------
 \begin{document}
@@ -39,7 +38,7 @@
   \task 答案
   \task 答案
   \task 答案
-  \task 答案
+  \task*(2) 答案
   \task 答案
 \end{tasks}
 

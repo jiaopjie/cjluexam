@@ -20,7 +20,7 @@
 %% 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{cjluexam}
-  [2021/06/11 v1.0.0 CJLU Exam Template]
+  [2021/12/01 v1.0.2 CJLU Exam Template]
 \newif\ifanswer
 \DeclareOption{answer}{\answertrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
@@ -29,97 +29,95 @@
 \PassOptionsToPackage{no-math}{fontspec}
 \RequirePackage[heading,zihao=5]{ctex}[2014/03/06]
 \RequirePackage[a4paper,margin=30mm,footskip=6mm]{geometry}
-\RequirePackage{titleps,lastpage}
+\RequirePackage{lastpage}
 \ifanswer
-  \newpagestyle{main}[\zihao{-5}]{%
-    \footrule
-    \setfoot{}{\fangsong
-      《\Course》课程试卷（\Type）参考答案及评分标准\quad
-      第 \thepage 页~共 \pageref{LastPage} 页}{}}
+  \def\cjluexam@foot
+  {《\Course》课程试卷（\Type）参考答案及评分标准\quad
+  第 \thepage 页~共 \pageref{LastPage} 页}
 \else
-  \newpagestyle{main}[\zihao{-5}]{%
-    \footrule
-    \setfoot{}{\cjluexam@setbinding\fangsong
-      中国计量大学 \AcademicYear 学年 \Semester 学期
-      《\Course》课程考试试卷（\Type）
-      第 \thepage 页~共 \pageref{LastPage} 页}{}}
+  \def\cjluexam@foot
+  {\cjluexam@binding 中国计量大学 \AcademicYear 学年第 \Term 学期%
+  《\Course》课程考试试卷（\Type）第 \thepage 页~共 \pageref{LastPage} 页}
 \fi
+\RequirePackage{titleps}
+\newpagestyle{main}[\zihao{-5}]
+  {\footrule\setfoot{}{\fangsong\cjluexam@foot}{}}
 \pagestyle{main}
 \if@twoside
-  \newcommand\cjluexam@setbinding{%
+  \newcommand\cjluexam@binding{%
     \ifcase\numexpr\value{page}-((\value{page}-2)/4)*4\relax
-      \cjluexam@binding[1]\or\cjluexam@binding\relax
+      \cjluexam@drawbinding[1]\or\cjluexam@drawbinding\relax
     \fi
   }
 \else
-  \newcommand\cjluexam@setbinding
-  {\ifodd\value{page}\relax\cjluexam@binding\fi}
+  \newcommand\cjluexam@binding
+  {\ifodd\value{page}\relax\cjluexam@drawbinding\fi}
 \fi
 \RequirePackage{graphicx,tikz}
-\newcommand\cjluexam@binding[1][-1]{%
+\newcommand\cjluexam@drawbinding[1][-1]{%
   \begin{tikzpicture}[remember picture,overlay]
-    \zihao{5}
-    \node
+    \zihao{5}\sffamily
+    \path (current page.center)
+      node
       [
         text width=\textheight,
         rotate=-90,
-        yshift=.5*#1*\textwidth+#1*.5cm
+        yshift=.5*#1*\textwidth+#1*.5cm,
       ]
-      at (current page.center)
-      {
-        \sffamily\dotfill
-        \raisebox{-.45em}{ \rotatebox{90}{装} }\dotfill
-        \raisebox{-.45em}{ \rotatebox{90}{订} }\dotfill
-        \raisebox{-.45em}{ \rotatebox{90}{线} }\dotfill
+      {%
+        \dotfill\raisebox{-.45em}{\rotatebox{90}{装}}%
+        \dotfill\raisebox{-.45em}{\rotatebox{90}{订}}%
+        \dotfill\raisebox{-.45em}{\rotatebox{90}{线}}\dotfill
       };
   \end{tikzpicture}%
 }
 \def\AcademicYear{} % 学年
-\def\Semester{}     % 学期
+\def\Term{}         % 学期
 \def\Course{}       % 科目
 \def\Type{}         % 试卷类型
-\def\School{}       % 开课学院
+\def\College{}      % 开课学院
 \newif\ifopen       % 是否开卷
 \newif\ifseat       % 是否打印座位号
 \def\Thing{}        % 可带入场的物品
-\def\ExamYear{}     % 考试时间-年
-\def\ExamMonth{}    % 考试时间-月
-\def\ExamDay{}      % 考试时间-日
-\def\ExamTime{}     % 考试时间-时
+\def\TestYear{}     % 考试时间-年
+\def\TestMonth{}    % 考试时间-月
+\def\TestDay{}      % 考试时间-日
+\def\TestTime{}     % 考试时间-时
 \def\Class{}        % 学生班级
 \def\Teacher{}      % 教师
 \RequirePackage{totcount}
 \regtotcounter{section}
 \ifanswer
-  \renewcommand{\maketitle}{
-    \bgroup
+  \renewcommand{\maketitle}{%
+    \begingroup
     \parindent0pt\linespread{1.5}\zihao{-4}%
     \begin{center}
       \zihao{4}\bfseries\fangsong
-      中国计量大学 \AcademicYear 学年第 \Semester 学期\\
+      中国计量大学 \AcademicYear 学年第 \Term 学期\\
       《\Course》课程试卷（\Type）\\
       参考答案及评分标准
     \end{center}%
-    开课二级学院：\Fill{9em}{\School}，
+    开课二级学院：\Fill{9em}{\College}，
     学生班级：\Fill{5em}{\Class}，
     教师：\Fill{6em}{\Teacher}
-    \egroup
+    \endgroup
   }
 \else
   \renewcommand{\maketitle}{%
-    \bgroup
-    \parindent0pt\linespread{1.5}\zihao{-4}\setlength{\fboxsep}{-0.4pt}%
+    \begingroup
+    \parindent0pt\linespread{1.5}\zihao{-4}%
     \begin{center}
       \ifseat\cjluexam@seat\fi
       \zihao{4}\bfseries\fangsong
-      中国计量大学 \AcademicYear 学年第 \Semester 学期\\
+      中国计量大学 \AcademicYear 学年第 \Term 学期\\
       《\Course》课程考试试卷（\Type）
     \end{center}%
-    开课二级学院：\Fill{9em}{\School}，%
+    开课二级学院：\Fill{9em}{\College}，%
     考试时间：\mbox{%
-      \Fill{3em}{\ExamYear}年\Fill{2em}{\ExamMonth}月%
-      \Fill{2em}{\ExamDay }日\Fill{2em}{\ExamTime }时}\\
+      \Fill{3em}{\TestYear}年\Fill{2em}{\TestMonth}月%
+      \Fill{2em}{\TestDay }日\Fill{2em}{\TestTime }时}\\
     考试形式：%
+    \setlength{\fboxsep}{-0.4pt}%
     \ifopen
       闭卷 \fbox{\rule[0.683em]{0.683em}{0em}}、%
       开卷 \rule{0.683em}{0.683em}，%
@@ -132,17 +130,14 @@
     学号：\Fill{5.2em}{}
     专业：\Fill{5.2em}{}
     班级：\Fill{5.2em}{}
-    \par\smallskip
-    \edef\cjluexam@num{\totvalue{section}}%
-    \ifnum\cjluexam@num<1\def\cjluexam@num{1}\fi
-    \cjluexam@score{\cjluexam@num}%
-    \egroup
+    \cjluexam@score{\totvalue{section}}%
+    \endgroup
   }
 \fi
 \newlength\cjluexam@length
 \newcommand\Fill[2]{%
   \settowidth{\cjluexam@length}{#2}%
-  \ifdim\cjluexam@length>#1
+  \ifdim\cjluexam@length>#1\relax
     \underline{\mbox{#2}}%
   \else
     \underline{\makebox[#1]{#2}}%
@@ -150,37 +145,35 @@
 }
 \RequirePackage{tabularx}
 \newcommand\cjluexam@score[1]{%
-  \ifnum #1<7
-    \begin{tabularx}{\textwidth}{|*{\numexpr#1+2}{>{\hfil}X|}}
-      \hline
-      题序   & \ccjluexam@Ncell{1}{#1}{2} & 总分 \\\hline
-      得分   & \ccjluexam@Ncell{1}{#1}{0} &      \\\hline
-      评卷人 & \ccjluexam@Ncell{1}{#1}{0} &      \\\hline
-    \end{tabularx}%
-  \else
-    \ifnum #1<11
-      \begin{tabularx}{\textwidth}{|c|*{\numexpr#1+1}{@{}>{\hfil}X@{}|}}
-        \hline
-        题序   & \ccjluexam@Ncell{1}{#1}{2} & 总分 \\\hline
-        得分   & \ccjluexam@Ncell{1}{#1}{0} &      \\\hline
-        评卷人 & \ccjluexam@Ncell{1}{#1}{0} &      \\\hline
-      \end{tabularx}%
+  \begin{flushleft}
+    \edef\cjluexam@num{#1}%
+    \ifnum\cjluexam@num<1\relax\def\cjluexam@num{1}\fi
+    \ifnum\cjluexam@num<7\relax
+      \newcolumntype{M}{|*{\numexpr\cjluexam@num+2}
+      {>{\centering\arraybackslash}X|}}%
     \else
-      \begin{tabular}{|c|*{#1}{@{}>{\hfil}p{2.55em}@{}|}c|}
-        \hline
-        题序   & \ccjluexam@Ncell{1}{#1}{2} & 总分 \\\hline
-        得分   & \ccjluexam@Ncell{1}{#1}{0} &      \\\hline
-        评卷人 & \ccjluexam@Ncell{1}{#1}{0} &      \\\hline
-      \end{tabular}%
+      \ifnum\cjluexam@num<11\relax
+        \newcolumntype{M}{|c|*{\numexpr\cjluexam@num+1}
+        {@{}>{\centering\arraybackslash}X@{}|}}%
+      \else
+        \newcolumntype{M}{|c|*{\cjluexam@num}
+        {@{}>{\centering\arraybackslash}X@{}|}c|}%
+      \fi
     \fi
-  \fi
+    \begin{tabularx}{\textwidth}{M}
+      \hline
+      题序   & \cjluexam@Ncell{1}{\cjluexam@num}{2} & 总分 \\\hline
+      得分   & \cjluexam@Ncell{1}{\cjluexam@num}{0} &      \\\hline
+      评卷人 & \cjluexam@Ncell{1}{\cjluexam@num}{0} &      \\\hline
+    \end{tabularx}%
+  \end{flushleft}%
 }
-\def\cjluexam@gobble#1{}
-\newcommand\ccjluexam@Ncell[3]{%
+\newcommand\cjluexam@gobble[1]{}
+\newcommand\cjluexam@Ncell[3]{%
   \ifnum  #1<2 \expandafter\cjluexam@gobble\fi &
   \ifcase #3 \or #1\else\zhnumber{#1}\fi
   \ifnum  #1<#2
-    \expandafter\ccjluexam@Ncell
+    \expandafter\cjluexam@Ncell
     \expandafter{\the\numexpr1+#1\expandafter}%
     \expandafter{\the\numexpr  #2\expandafter}%
     \expandafter{\the\numexpr  #3\expandafter}%
@@ -202,12 +195,12 @@
   format=\sffamily,
   aftername={},
   aftertitle={},
-  beforeskip=2ex plus .5ex minus .5ex,
-  afterskip=1ex plus .5ex minus .5ex,
+  beforeskip=1ex plus .5ex minus .5ex,
+  afterskip =1ex plus .5ex minus .5ex,
   runin=true,
 }}
-\setlength\lineskiplimit{.333em}
-\setlength\lineskip{.333em}
+\setlength\lineskiplimit{.25em}
+\setlength\lineskip     {.25em}
 \endinput
 %%
 %% End of file `cjluexam.cls'.

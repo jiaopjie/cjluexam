@@ -2,28 +2,27 @@
 \documentclass[oneside,AutoFakeBold=2.85]{cjluexam}
 % 文档选项 oneside 与 twoside 分别用于单面打印、双面打印
 
-% Options --------------------------------------------------------
+% Information ----------------------------------------------------
 \def\AcademicYear{2020～2021} % 学年
-\def\Semester{1}        % 学期
-\def\Course{高等数学}   % 科目
-\def\Type{A}            % 试卷类型
-\def\School{理学院}     % 开课学院
-%\opentrue               % 开卷
-%\seattrue               % 打印座位号
-%\def\Thing{}            % 可带入场的物品
-%\def\ExamYear{}         % 考试时间-年
-%\def\ExamMonth{}        % 考试时间-月
-%\def\ExamDay{}          % 考试时间-日
-%\def\ExamTime{}         % 考试时间-时
-%\setcounter{section}{9} % 若大题未用 \section 命令, 需设置 section 计数器
+\def\Term{1}                  % 学期
+\def\Course{高等数学}         % 科目
+\def\Type{A}                  % 试卷类型
+\def\College{理学院}          % 开课学院
+%\seattrue                     % 座位号
+%\opentrue                     % 开卷
+%\def\Thing{}                  % 可带入场的物品
+%\def\TestYear{}               % 考试时间-年
+%\def\TestMonth{}              % 考试时间-月
+%\def\TestDay{}                % 考试时间-日
+%\def\TestTime{}               % 考试时间-时
+%\setcounter{section}{9}       % 得分栏列数根据 section 计数器自动调整
 
-% Others ---------------------------------------------------------
-%\setCJKsansfont{SimHei}
-%\ctexset{\section/runin=false}
-\usepackage{enumitem}
-\setlist{leftmargin=*}
-\usepackage{tasks}      % tasks 宏包用于排版每行多项的列表
+% Custom ---------------------------------------------------------
+%\ctexset{section/runin=false} % 题目标题后换行
+\usepackage{enumitem,tasks}
+\setlist{nosep,leftmargin=*}
 \settasks{label=(\Alph*),label-width=1.6em,label-offset=.2em,item-indent=1.8em}
+\settasks{before-skip=0pt,after-skip=0pt,after-item-skip=0pt}
 
 % ----------------------------------------------------------------
 \begin{document}
@@ -32,7 +31,7 @@
 
 \section{单项选择题（每小题3分，共15分）}
 
-\begin{enumerate}
+\begin{enumerate}[topsep=8pt,itemsep=4pt]
   \item
     请选择\Fill{4em}{}.
     \begin{tasks}(4)
@@ -59,7 +58,7 @@
     \end{tasks}
   \item
     请选择\Fill{4em}{}.
-    \begin{tasks}(2)
+    \begin{tasks}
       \task 选项
       \task 选项
       \task 选项
@@ -79,7 +78,7 @@
 
 \section{填空题（每小题3分，共15分）}
 
-\begin{enumerate}
+\begin{enumerate}[topsep=8pt, itemsep=4pt]
   \item
     请填空\Fill{8em}{}.
   \item
@@ -92,7 +91,7 @@
     请填空\Fill{8em}{}.
 \end{enumerate}
 
-\section{计算题（每小题10分，共20分）}
+\section{（每小题10分，共20分）}
 
 \begin{enumerate}
   \item
@@ -104,7 +103,7 @@
 
 \clearpage
 
-\section{解答题（每小题10分，共30分）}
+\section{（每小题10分，共30分）}
 
 \begin{enumerate}
   \item
@@ -120,7 +119,7 @@
 
 \clearpage
 
-\section{应用题（每小题10分，共20分）}
+\section{（每小题10分，共20分）}
 
 \begin{enumerate}
   \item
