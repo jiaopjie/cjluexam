@@ -33,8 +33,6 @@
 * 题目数最好不要超过 10
 
 * 正确得到装订线、座位号、得分栏、总页数等需要编译 2 遍
-
-* 本模板作者**不对**使用者的格式问题负责
 %</readme>
 %<*internal>
 \fi
@@ -89,7 +87,7 @@ LaTeX version 2005/12/01 or later.
 %<class>\NeedsTeXFormat{LaTeX2e}
 %<class>\ProvidesClass{cjluexam}
 %<*class>
-  [2021/12/01 v1.0.2 CJLU Exam Template]
+  [2021/12/12 v1.0.3 CJLU Exam Template]
 %</class>
 %
 %<*driver>
@@ -203,7 +201,11 @@ LaTeX version 2005/12/01 or later.
 % \pkg{tikz},
 % \pkg{graphicx},
 % \pkg{totcount},
-% \pkg{tabularx}.
+% \pkg{tabularx},
+% \pkg{enumitem},
+% \pkg{tasks},
+% \pkg{tabto},
+% \pkg{etoolbox}.
 %
 % \subsection{注意事项}
 %
@@ -353,19 +355,35 @@ LaTeX version 2005/12/01 or later.
 %\setCJKsansfont{SimHei}
 %\end{verbatim}
 %
-% \subsection{项目编号}
+% \subsection{列表}
 %
-% 原生的 \env{itemize} 与 \env{enumerate} 环境的各项目之间的距离偏大.
-% 可通过宏包 \pkg{enumitem} 进行优化设置.
-%\begin{verbatim}
-%\setlist{nosep,leftmargin=*}
-%\end{verbatim}
+% 模板载入了 \pkg{enumitem} 宏包设置列表环境.
 %
-% 选择题的选项可使用 \pkg{tasks} 宏包提供的 \env{tasks} 环境.
+% 选择题的选项等行内列表可使用 \env{tasks} 或 \env{enumerate*} 环境实现.
+% \begin{itemize}
+%   \item
+%     使用 \env{tasks} 环境.
+%     下面代码中的 \opt{(3)} 表示每行设 3 个制表位,
+%     环境内的 \cmd{\task*(2)} 表示当前项占 2 个制表位.
 %\begin{verbatim}
-%\settasks{label=(\Alph*),label-width=1.6em,label-offset=.2em,item-indent=1.8em}
-%\settasks{before-skip=0pt,after-skip=0pt,after-item-skip=0pt}
+%\begin{tasks}(3)
+%  \task A
+%  \task A
+%  \task A
+%  \task*(2) A
+%  \task A
+%\end{tasks}
 %\end{verbatim}
+%   \item
+%     使用 \env{enumerate*} 环境.
+%     下面代码中的 \opt{cols=2} 表示每行设 2 个制表位.
+%\begin{verbatim}
+%\begin{enumerate*}[cols=2]
+%  \item A
+%  \item A
+%\end{enumerate*}
+%\end{verbatim}
+% \end{itemize}
 %
 % \section{实现代码}
 %
@@ -378,9 +396,11 @@ LaTeX version 2005/12/01 or later.
 % 基于基础文档类 \cls{article} 设计模板.
 %
 % \DescribeOpt{answer}
+% \DescribeMacro{\ifanswer}
 % 声明文档选项 \opt{answer}.
 %
 % \cmd{\ifanswer} 取 \opt{true} 时排版参考答案, 取 \opt{false} 时排版试卷.
+%
 %    \begin{macrocode}
 \newif\ifanswer
 \DeclareOption{answer}{\answertrue}
@@ -388,7 +408,6 @@ LaTeX version 2005/12/01 or later.
 %
 % 处理文档选项. 载入 \cls{article} 文档类, 并把其他文档选项传递给它.
 % 命令 \cmd{\ProcessOptions} 结束选项声明.
-%
 %    \begin{macrocode}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions
@@ -399,7 +418,6 @@ LaTeX version 2005/12/01 or later.
 %
 % 若载入 \pkg{fontspec} 宏包, 则对其使用 \opt{no-math} 选项.
 % 这样, 通过该宏包修改主文档字体时不修改数学字体.
-%
 %    \begin{macrocode}
 \PassOptionsToPackage{no-math}{fontspec}
 %    \end{macrocode}
@@ -407,7 +425,6 @@ LaTeX version 2005/12/01 or later.
 % 载入 \pkg{ctex} 宏包提供中文支持.
 % 选项 \opt{heading} 启用标题格式设置功能.
 % 选项 \opt{zihao=5} 设置主文档字体尺寸为五号 (10.5\,bp).
-%
 %    \begin{macrocode}
 \RequirePackage[heading,zihao=5]{ctex}[2014/03/06]
 %    \end{macrocode}
@@ -415,18 +432,17 @@ LaTeX version 2005/12/01 or later.
 % \subsection{版面}
 %
 % 载入 \pkg{geometry} 宏包设置页面尺寸.
-%
 %    \begin{macrocode}
 \RequirePackage[a4paper,margin=30mm,footskip=6mm]{geometry}
 %    \end{macrocode}
 %
 % \begin{macro}{\cjluexam@foot}
-% 页脚内容.
-% 其中, 总页数依赖 \pkg{lastpage} 宏包,
-% \cmd{\cjluexam@binding} 设装订线.
 %
 % \changes{v1.0.2}{2021/11/15}{改用宏命令储存页脚内容}
 %
+% 页脚内容.
+% 其中, 总页数依赖 \pkg{lastpage} 宏包,
+% \cmd{\cjluexam@binding} 设装订线.
 %    \begin{macrocode}
 \RequirePackage{lastpage}
 \ifanswer
@@ -441,11 +457,10 @@ LaTeX version 2005/12/01 or later.
 %    \end{macrocode}
 % \end{macro}
 %
-% 载入 \pkg{titleps} 宏包设置页眉页脚.
-% 其中 \cmd{\setfoot} 的三个参数分别表示左侧、中间、右侧的内容;
-%
 % \changes{v1.0.1}{2021/06/19}{改用 \pkg{lastpage} 宏包打印总页数}
 %
+% 载入 \pkg{titleps} 宏包设置页眉页脚.
+% 其中 \cmd{\setfoot} 的三个参数分别表示左侧、中间、右侧的内容;
 %    \begin{macrocode}
 \RequirePackage{titleps}
 \newpagestyle{main}[\zihao{-5}]
@@ -457,7 +472,6 @@ LaTeX version 2005/12/01 or later.
 % 设装订线.
 % 文档选项为 \opt{twoside} 时, 装订线设在模 4 余 0、1 的页面;
 % 为 \opt{oneside} 时, 装订线设在奇数页.
-%
 %    \begin{macrocode}
 \if@twoside
   \newcommand\cjluexam@binding{%
@@ -475,7 +489,6 @@ LaTeX version 2005/12/01 or later.
 % \begin{macro}{\cjluexam@drawbinding}
 % 装订线的具体绘制.
 % 参数取 \opt{-1} 时装订线在左侧, 参数取 \opt{1} 时在右侧.
-%
 %    \begin{macrocode}
 \RequirePackage{graphicx,tikz}
 \newcommand\cjluexam@drawbinding[1][-1]{%
@@ -507,7 +520,6 @@ LaTeX version 2005/12/01 or later.
 % \begin{macro}{\Type}
 % \begin{macro}{\College}
 % 排版试卷、参考答案时, 生成标题都需要收集的信息.
-%
 %    \begin{macrocode}
 \def\AcademicYear{} % 学年
 \def\Term{}         % 学期
@@ -529,7 +541,6 @@ LaTeX version 2005/12/01 or later.
 % \begin{macro}{\TestDay}
 % \begin{macro}{\TestTime}
 % 排版试卷时, 生成标题需要收集的信息.
-%
 %    \begin{macrocode}
 \newif\ifopen       % 是否开卷
 \newif\ifseat       % 是否打印座位号
@@ -550,7 +561,6 @@ LaTeX version 2005/12/01 or later.
 % \begin{macro}{\Class}
 % \begin{macro}{\Teacher}
 % 排版参考答案时, 生成标题需要收集的信息.
-%
 %    \begin{macrocode}
 \def\Class{}        % 学生班级
 \def\Teacher{}      % 教师
@@ -560,7 +570,6 @@ LaTeX version 2005/12/01 or later.
 %
 % \begin{macro}{\maketitle}
 % 重定义 \cmd{\maketitle} 命令输出标题、考生相关信息、得分栏、座位号等.
-%
 %    \begin{macrocode}
 \RequirePackage{totcount}
 \regtotcounter{section}
@@ -622,7 +631,6 @@ LaTeX version 2005/12/01 or later.
 % 参数 \opt{\#2} 是指定的文本.
 %
 % \cmd{\cjluexam@length} 是辅助长度变量, 用于条件判断.
-%
 %    \begin{macrocode}
 \newlength\cjluexam@length
 \newcommand\Fill[2]{%
@@ -638,10 +646,10 @@ LaTeX version 2005/12/01 or later.
 % \end{macro}
 %
 % \begin{macro}{\cjluexam@score}
-% 生成列数可变的得分栏.
 %
 % \changes{v1.0.2}{2021/11/16}{通过定义列格式简化操作}
 %
+% 生成列数可变的得分栏.
 %    \begin{macrocode}
 \RequirePackage{tabularx}
 \newcommand\cjluexam@score[1]{%
@@ -709,7 +717,6 @@ LaTeX version 2005/12/01 or later.
 % \begin{macro}{\cjluexam@seat}
 % 打印座位号.
 % 代码中的坐标以页面左上角为原点.
-%
 %    \begin{macrocode}
 \RequirePackage{tikz}
 \newcommand\cjluexam@seat{%
@@ -728,7 +735,6 @@ LaTeX version 2005/12/01 or later.
 %
 % 设置 \cmd{\section} 级标题的格式.
 % 其中 \opt{runin=true} 表示标题后不换行, 直接排版后续内容.
-%
 %    \begin{macrocode}
 \ctexset{section={
   name={,、},
@@ -742,12 +748,83 @@ LaTeX version 2005/12/01 or later.
 }}
 %    \end{macrocode}
 %
+% \subsection{列表}
+%
+% \changes{v1.0.3}{2021/12/12}{设置列表环境}
+%
+% 载入 \pkg{enumitem} 宏包设置列表环境.
+%    \begin{macrocode}
+\RequirePackage[inline]{enumitem}
+\setlist{nosep,leftmargin=*}
+%    \end{macrocode}
+%
+% 选择题的选项等行内列表可使用 \env{enumerate*} 环境实现.
+% 该方案需要配合 \pkg{tabto} 提供的 \cmd{\tab} 命令实现.
+% 其中, \cmd{\NumTabs} 命令设置的制表位个数.
+%
+% 该方案的缺点: \env{enumerate*} 不会在环境开始的时候自动换行;
+% 列表项的间距就是正文的行间距, 不能个性化调整.
+% 这里的解决方案是, 在环境开始的时候添加 \cs{par} 命令.
+% 但若该环境紧跟着 \cmd{\section} 等章节命令,
+% 且开启了 \opt{runin} 选项时, 仍不能自动换行.
+%    \begin{macrocode}
+\RequirePackage{tabto}
+\NumTabs{1}
+\SetEnumitemKey{cols}{before=\NumTabs{#1}}
+\setlist[enumerate]{itemjoin=\tab}
+\setlist[enumerate,2]{label=(\Alph*),widest=A}
+\RequirePackage{etoolbox}
+\AtBeginEnvironment{enumerate*}{\par\noindent}
+%    \end{macrocode}
+%
+% 选择题的选项等行内列表可使用 \env{tasks} 环境实现.
+%    \begin{macrocode}
+\RequirePackage{tasks}
+\settasks{before-skip=0pt,after-skip=0pt,after-item-skip=0pt}
+\ifanswer
+  \settasks{label=\arabic*.,label-width=1em,label-offset=.2em,item-indent=1.2em}
+\else
+  \settasks{label=(\Alph*),label-width=1.6em,label-offset=.2em,item-indent=1.8em}
+\fi
+%    \end{macrocode}
+%
 % \subsection{其他}
 %
 % 两行之间的最小空白.
 %    \begin{macrocode}
 \setlength\lineskiplimit{.25em}
 \setlength\lineskip     {.25em}
+%    \end{macrocode}
+%
+% \changes{v1.0.3}{2021/12/12}{调整显式公式前后的空白}
+%
+% 显式公式前后的空白.
+%    \begin{macrocode}
+\appto\normalsize{%
+  \setlength\abovedisplayskip{.2em plus .2em minus .2em}%
+  \setlength\belowdisplayskip{.2em plus .2em minus .2em}%
+  \setlength\abovedisplayshortskip{0em plus .1em}%
+  \setlength\belowdisplayshortskip{0em plus .1em}%
+}
+%    \end{macrocode}
+%
+% \changes{v1.0.3}{2021/12/12}{调整浮动体前后的空白}
+%
+% 浮动体前后的空白.
+%    \begin{macrocode}
+\setlength\intextsep   {.75em plus .2em minus .2em}
+\setlength\floatsep    {.75em plus .2em minus .2em}
+\setlength\textfloatsep{.75em plus .2em minus .2em}
+\setlength{\abovecaptionskip}{0em}
+\AtBeginEnvironment{table}{\setlength{\belowcaptionskip}{.5em}}
+%    \end{macrocode}
+%
+% \changes{v1.0.3}{2021/12/12}{设置浮动体默认的位置选项}
+%
+% 浮动体默认的位置选项.
+%    \begin{macrocode}
+\def\fps@figure{!htb}
+\def\fps@table{!htb}
 %    \end{macrocode}
 %
 %    \begin{macrocode}

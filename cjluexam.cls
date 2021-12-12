@@ -20,7 +20,7 @@
 %% 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{cjluexam}
-  [2021/12/01 v1.0.2 CJLU Exam Template]
+  [2021/12/12 v1.0.3 CJLU Exam Template]
 \newif\ifanswer
 \DeclareOption{answer}{\answertrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
@@ -199,8 +199,37 @@
   afterskip =1ex plus .5ex minus .5ex,
   runin=true,
 }}
+\RequirePackage[inline]{enumitem}
+\setlist{nosep,leftmargin=*}
+\RequirePackage{tabto}
+\NumTabs{1}
+\SetEnumitemKey{cols}{before=\NumTabs{#1}}
+\setlist[enumerate]{itemjoin=\tab}
+\setlist[enumerate,2]{label=(\Alph*),widest=A}
+\RequirePackage{etoolbox}
+\AtBeginEnvironment{enumerate*}{\par\noindent}
+\RequirePackage{tasks}
+\settasks{before-skip=0pt,after-skip=0pt,after-item-skip=0pt}
+\ifanswer
+  \settasks{label=\arabic*.,label-width=1em,label-offset=.2em,item-indent=1.2em}
+\else
+  \settasks{label=(\Alph*),label-width=1.6em,label-offset=.2em,item-indent=1.8em}
+\fi
 \setlength\lineskiplimit{.25em}
 \setlength\lineskip     {.25em}
+\appto\normalsize{%
+  \setlength\abovedisplayskip{.2em plus .2em minus .2em}%
+  \setlength\belowdisplayskip{.2em plus .2em minus .2em}%
+  \setlength\abovedisplayshortskip{0em plus .1em}%
+  \setlength\belowdisplayshortskip{0em plus .1em}%
+}
+\setlength\intextsep   {.75em plus .2em minus .2em}
+\setlength\floatsep    {.75em plus .2em minus .2em}
+\setlength\textfloatsep{.75em plus .2em minus .2em}
+\setlength{\abovecaptionskip}{0em}
+\AtBeginEnvironment{table}{\setlength{\belowcaptionskip}{.5em}}
+\def\fps@figure{!htb}
+\def\fps@table{!htb}
 \endinput
 %%
 %% End of file `cjluexam.cls'.
