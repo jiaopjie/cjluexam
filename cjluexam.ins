@@ -20,6 +20,7 @@
 %% 
 \input docstrip.tex
 \keepsilent
+\askforoverwritefalse
 
 \preamble
 
@@ -37,10 +38,11 @@ LaTeX version 2005/12/01 or later.
 
 \endpreamble
 
-\askforoverwritefalse
 \generate{
+  \usedir{tex/latex/cjluexam}
   \file{\jobname.cls}{\from{\jobname.dtx}{class}}
   \nopreamble\nopostamble
+  \usedir{doc/latex/cjluexam}
   \file{README.md}{\from{\jobname.dtx}{readme}}
 }
 \endbatchfile

@@ -20,7 +20,7 @@
 %% 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{cjluexam}
-  [2021/12/12 v1.0.3 CJLU Exam Template]
+  [2021/12/25 v1.0.4 CJLU Exam Template]
 \newif\ifanswer
 \DeclareOption{answer}{\answertrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
@@ -230,6 +230,13 @@
 \AtBeginEnvironment{table}{\setlength{\belowcaptionskip}{.5em}}
 \def\fps@figure{!htb}
 \def\fps@table{!htb}
+\newcolumntype{C}{>{\(\displaystyle{}}c<{{}\)}}
+\newcolumntype{L}{>{\(\displaystyle{}}l<{{}\)}}
+\newcolumntype{R}{>{\(\displaystyle{}}r<{{}\)}}
+\newcolumntype{Y}{>{\(\displaystyle{}}X<{{}\)}}
+\newcolumntype{P}[1]{>{\(\displaystyle{}}p{#1}<{{}\)}}
+\newcommand{\cdotfill}[1][.5em]
+  {\leavevmode\cleaders\hbox to #1{\hss$\cdot$\hss}\hfill\kern0pt}
 \endinput
 %%
 %% End of file `cjluexam.cls'.

@@ -37,14 +37,12 @@
 %<*internal>
 \fi
 \begingroup
-\def\nameoflatex{LaTeX2e}
-\expandafter\endgroup\ifx\nameoflatex\fmtname\else
-\csname fi\endcsname
 %</internal>
 %
 %<*install>
 \input docstrip.tex
 \keepsilent
+\askforoverwritefalse
 
 \preamble
 
@@ -62,33 +60,29 @@ LaTeX version 2005/12/01 or later.
 
 \endpreamble
 
-\askforoverwritefalse
 \generate{
+  \usedir{tex/latex/cjluexam}
   \file{\jobname.cls}{\from{\jobname.dtx}{class}}
-%</install>
-%<*internal>
-  \file{\jobname.ins}{\from{\jobname.dtx}{install}}
-%</internal>
-%<*install>
   \nopreamble\nopostamble
+  \usedir{doc/latex/cjluexam}
   \file{README.md}{\from{\jobname.dtx}{readme}}
 }
-\endbatchfile
 %</install>
-%
+%<install>\endbatchfile
 %<*internal>
-\fi
+\usedir{source/latex/cjluexam}
+\generate{\file{\jobname.ins}{\from{\jobname.dtx}{install}}}
+\endgroup
 %</internal>
 %
 %<*driver>
 \ProvidesFile{\jobname.dtx}
 %</driver>
-%
 %<class>\NeedsTeXFormat{LaTeX2e}
 %<class>\ProvidesClass{cjluexam}
-%<*class>
-  [2021/12/12 v1.0.3 CJLU Exam Template]
-%</class>
+%<*driver|class>
+  [2021/12/25 v1.0.4 CJLU Exam Template]
+%</driver|class>
 %
 %<*driver>
 \documentclass[a4paper]{ltxdoc}
@@ -114,7 +108,8 @@ LaTeX version 2005/12/01 or later.
 \def\pkg{\textsf}
 \def\env{\texttt}
 \def\opt{\texttt}
-\def\file{\texttt}
+\def\ext{\texttt}
+\def\fname{\texttt}
 \begin{document}
 \DocInput{\jobname.dtx}
 \linespread{1}
@@ -122,29 +117,7 @@ LaTeX version 2005/12/01 or later.
 %</driver>
 % \fi
 %
-% \CheckSum{0}
-%
-% \CharacterTable
-% {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
-%  Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
-%  Digits        \0\1\2\3\4\5\6\7\8\9
-%  Exclamation   \!      Double quote \"      Hash (number) \#
-%  Dollar        \$      Percent      \%      Ampersand     \&
-%  Acute accent  \'      Left paren   \(      Right paren   \)
-%  Asterisk      \*      Plus         \+      Comma         \,
-%  Minus         \-      Point        \.      Solidus       \/
-%  Colon         \:      Semicolon    \;      Less than     \<
-%  Equals        \=      Greater than \>      Question mark \?
-%  Commercial at \@      Left bracket \[      Backslash     \\
-%  Right bracket \]      Circumflex   \^      Underscore    \_
-%  Grave accent  \`      Left brace   \{      Vertical bar  \|
-%  Right brace   \}      Tilde        \~}
-%
-%
-% \changes{v1.0.0}{2021/06/11}{Initial version}
-%
-% \GetFileInfo{\jobname.dtx}
-%
+% \DoNotIndex{\#,\$,\%,\&,\@,\\,\{,\},\(,\),\^,\_,\~,\ }
 % \DoNotIndex{\mbox,\makebox,\fbox,\framebox,\fboxsep,\parbox}
 % \DoNotIndex{\cdot,\rule,\underline,\hline}
 % \DoNotIndex{\setmainfont,\setsansfont,\setmonofont}
@@ -155,7 +128,7 @@ LaTeX version 2005/12/01 or later.
 % \DoNotIndex{\textbf,\textit,\textsf,\textrm}
 % \DoNotIndex{\space,\enskip,\quad,\qquad,\enspace}
 % \DoNotIndex{\newpage,\pagebreak,\clearpage,\cleardoublepage}
-% \DoNotIndex{\newline,\linebreak,\\,\par}
+% \DoNotIndex{\newline,\linebreak,\par}
 % \DoNotIndex{\hspace,\hskip,\hfill,\hfil,\fill,\dotfill,\hrulefill}
 % \DoNotIndex{\vspace,\vskip,\vfill,\addvspace,\smallskip,\medskip,\bigskip}
 % \DoNotIndex{\topskip,\parskip,\baselineskip,\lineskip,\lineskiplimit}
@@ -171,6 +144,11 @@ LaTeX version 2005/12/01 or later.
 % \DoNotIndex{\RequirePackage,\PassOptionsToPackage}
 % \DoNotIndex{\DeclareOption,\PassOptionsToClass,\ProcessOptions,\LoadClass}
 % \DoNotIndex{\AtBeginDocument,\AtEndDocument}
+%
+% \changes{v1.0.0}{2021/06/11}{Initial version}
+% \changes{v1.0.4}{2021/12/25}{微调 \ext{.dtx} 文件结构}
+%
+% \GetFileInfo{\jobname.dtx}
 %
 % \title{文档类 \cls{\jobname} 使用说明}
 % \author{jiaopjie\thanks{jiaopjie@cjlu.edu.cn}}
@@ -236,16 +214,16 @@ LaTeX version 2005/12/01 or later.
 %     \toprule
 %     类别     & 文件           & 说明\\
 %     \midrule
-%     模板文件 & \file{\jobname.dtx} & 模板代码文件\\
-%              & \file{\jobname.cls} & 文档类文件\\
-%              & \file{\jobname.ins} & 模板安装文件\\
-%              & \file{\jobname.pdf} & 模板说明\\
-%              & \file{README.md}    & 简要文本说明\\
+%     模板文件 & \fname{\jobname.dtx} & 模板代码文件\\
+%              & \fname{\jobname.cls} & 文档类文件\\
+%              & \fname{\jobname.ins} & 模板安装文件\\
+%              & \fname{\jobname.pdf} & 模板说明\\
+%              & \fname{README.md}    & 简要文本说明\\
 %     \midrule
-%     示例文档 & \file{exam.tex}     & 试卷源文件\\
-%              & \file{exam.pdf}     & 试卷\\
-%              & \file{answer.tex}   & 参考答案及评分标准源文件\\
-%              & \file{answer.pdf}   & 参考答案及评分标准\\
+%     示例文档 & \fname{exam.tex}     & 试卷源文件\\
+%              & \fname{exam.pdf}     & 试卷\\
+%              & \fname{answer.tex}   & 参考答案及评分标准源文件\\
+%              & \fname{answer.pdf}   & 参考答案及评分标准\\
 %     \bottomrule
 %   \end{tabular}
 % \end{table}
@@ -513,9 +491,9 @@ LaTeX version 2005/12/01 or later.
 %
 % \subsection{标题}
 %
-% \changes{v1.0.2}{2021/11/29}{更改学期、学院、考试时间的宏名}
 % \begin{macro}{\AcademicYear}
 % \begin{macro}{\Term}
+% \changes{v1.0.2}{2021/11/29}{更改学期、学院、考试时间的宏名}
 % \begin{macro}{\Course}
 % \begin{macro}{\Type}
 % \begin{macro}{\College}
@@ -646,9 +624,7 @@ LaTeX version 2005/12/01 or later.
 % \end{macro}
 %
 % \begin{macro}{\cjluexam@score}
-%
 % \changes{v1.0.2}{2021/11/16}{通过定义列格式简化操作}
-%
 % 生成列数可变的得分栏.
 %    \begin{macrocode}
 \RequirePackage{tabularx}
@@ -826,6 +802,29 @@ LaTeX version 2005/12/01 or later.
 \def\fps@figure{!htb}
 \def\fps@table{!htb}
 %    \end{macrocode}
+%
+% \changes{v1.0.4}{2021/12/25}{定义表格的列格式说明符}
+%
+% \DescribeOpt{C,L,R,Y,P}
+% 定义表格的列格式说明符.
+% 它们分别对应 \opt{c,l,r,X,p}, 确保进入显式公式模式.
+%    \begin{macrocode}
+\newcolumntype{C}{>{\(\displaystyle{}}c<{{}\)}}
+\newcolumntype{L}{>{\(\displaystyle{}}l<{{}\)}}
+\newcolumntype{R}{>{\(\displaystyle{}}r<{{}\)}}
+\newcolumntype{Y}{>{\(\displaystyle{}}X<{{}\)}}
+\newcolumntype{P}[1]{>{\(\displaystyle{}}p{#1}<{{}\)}}
+%    \end{macrocode}
+%
+% \begin{macro}{\cdotfill}
+% \changes{v1.0.4}{2021/12/25}{居中的前导符}
+% 类似于 \cmd{\dotfill}, 圆点居中的前导符.
+% 可选参数 \opt{\#1} 是圆点间距, 默认为 \opt{.5em}.
+%    \begin{macrocode}
+\newcommand{\cdotfill}[1][.5em]
+  {\leavevmode\cleaders\hbox to #1{\hss$\cdot$\hss}\hfill\kern0pt}
+%    \end{macrocode}
+% \end{macro}
 %
 %    \begin{macrocode}
 %</class>
