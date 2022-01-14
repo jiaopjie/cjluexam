@@ -1,18 +1,21 @@
 % !TeX program = xelatex
-\documentclass[answer,AutoFakeBold=2.85]{cjluexam}
+\documentclass[AutoFakeBold=2.85]{cjluexam}
 
 % Information ----------------------------------------------------
-\def\AcademicYear{2020～2021} % 学年
-\def\Term{1}                  % 学期
-\def\Course{高等数学}         % 科目
-\def\Type{A}                  % 试卷类型
-\def\School{理学院}           % 开课学院
-%\def\Class{}                  % 学生班级
-%\def\Teacher{}                % 教师
+\cjluexamset{
+  answer,                       % 参考答案
+  %academicyear = {2020～2021},  % 学年
+  %term         = {1},           % 学期
+  %course       = {高等数学},    % 科目
+  %type         = {A},           % 试卷类型
+  %college      = {理学院},      % 开课学院
+  %class        = {},            % 学生班级
+  %teacher      = {},            % 教师
+}
 
 % Custom ---------------------------------------------------------
-%\ctexset{section/format={}}   % 题目标题的格式
-%\ctexset{section/runin=false} % 题目标题后换行
+%\ctexset{section/format=\sffamily}  % 题目标题的格式
+%\ctexset{section/runin=true}        % 题目标题后不换行, 直接排版后续内容
 
 % ----------------------------------------------------------------
 \begin{document}

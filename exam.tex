@@ -3,23 +3,21 @@
 % 文档选项 oneside 与 twoside 分别用于单面打印、双面打印
 
 % Information ----------------------------------------------------
-\def\AcademicYear{2020～2021} % 学年
-\def\Term{1}                  % 学期
-\def\Course{高等数学}         % 科目
-\def\Type{A}                  % 试卷类型
-\def\College{理学院}          % 开课学院
-%\seattrue                     % 座位号
-%\opentrue                     % 开卷
-%\def\Thing{}                  % 可带入场的物品
-%\def\TestYear{}               % 考试时间-年
-%\def\TestMonth{}              % 考试时间-月
-%\def\TestDay{}                % 考试时间-日
-%\def\TestTime{}               % 考试时间-时
-%\setcounter{section}{9}       % 得分栏列数根据 section 计数器自动调整
+\cjluexamset{
+  %academicyear = {2020～2021},  % 学年
+  %term         = {1},           % 学期
+  %course       = {高等数学},    % 科目
+  %type         = {A},           % 试卷类型
+  %college      = {理学院},      % 开课学院
+  %openbook,                     % 开卷
+  %seat,                         % 座位号
+  %carryon      = {计算器},      % 可带入考场的物品
+}
 
 % Custom ---------------------------------------------------------
-%\ctexset{section/format={}}   % 题目标题的格式
-%\ctexset{section/runin=false} % 题目标题后换行
+%\setcounter{section}{9}             % 得分栏列数根据 section 计数器自动调整
+%\ctexset{section/format=\sffamily}  % 题目标题的格式
+%\ctexset{section/runin=true}        % 题目标题后不换行, 直接排版后续内容
 
 % ----------------------------------------------------------------
 \begin{document}
@@ -30,7 +28,7 @@
 
 \begin{enumerate}[topsep=8pt,itemsep=4pt]
   \item
-    请选择\Fill{4em}{}.
+    请选择\Fill{}.
     \begin{tasks}(4)
       \task 选项
       \task 选项
@@ -38,7 +36,7 @@
       \task 选项
     \end{tasks}
   \item
-    请选择\Fill{4em}{}.
+    请选择\Fill{}.
     \begin{tasks}(2)
       \task 选项
       \task 选项
@@ -46,7 +44,7 @@
       \task 选项
     \end{tasks}
   \item
-    请选择\Fill{4em}{}.
+    请选择\Fill{}.
     \begin{tasks}(1)
       \task 选项
       \task 选项
@@ -54,7 +52,7 @@
       \task 选项
     \end{tasks}
   \item
-    请选择\Fill{4em}{}.
+    请选择\Fill{}.
     \begin{tasks}
       \task 选项
       \task 选项
@@ -62,7 +60,7 @@
       \task 选项
     \end{tasks}
   \item
-    请选择\Fill{4em}{}.
+    请选择\Fill{}.
     \begin{tasks}(2)
       \task 选项
       \task 选项
@@ -77,15 +75,15 @@
 
 \begin{enumerate}[topsep=8pt, itemsep=4pt]
   \item
-    请填空\Fill{8em}{}.
+    请填空\Fill[8em]{}.
   \item
-    请填空\Fill{8em}{}.
+    请填空\Fill[8em]{}.
   \item
-    请填空\Fill{8em}{}.
+    请填空\Fill[8em]{}.
   \item
-    请填空\Fill{8em}{}.
+    请填空\Fill[8em]{}.
   \item
-    请填空\Fill{8em}{}.
+    请填空\Fill[8em]{}.
 \end{enumerate}
 
 \section{（每小题10分，共20分）}

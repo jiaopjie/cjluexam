@@ -24,7 +24,7 @@
 
 * 本项目参照 Word 模板设计
 
-* 请使用 XeLaTeX 编译方式, 使用其他编译方式时, 页面会有所变化
+* 建议使用 XeLaTeX 编译
 
 * `ctex` 宏包应升级到 2.0 以上版本
 
@@ -76,19 +76,16 @@ LaTeX version 2005/12/01 or later.
 %</internal>
 %
 %<*driver>
-\ProvidesFile{\jobname.dtx}
+\ProvidesFile{\jobname.dtx}[2022/01/14 v1.1.0 CJLU Exam Template]
 %</driver>
 %<class>\NeedsTeXFormat{LaTeX2e}
-%<class>\ProvidesClass{cjluexam}
-%<*driver|class>
-  [2021/12/25 v1.0.4 CJLU Exam Template]
-%</driver|class>
+%<class>\ProvidesExplClass{cjluexam}
+%<class>  {2022/01/14}{1.1.0}{CJLU Exam Template}
 %
 %<*driver>
-\documentclass[a4paper]{ltxdoc}
-\usepackage{ctex,etoolbox,hypdoc,booktabs}
-\usepackage{enumitem}
-\setlist{nosep}
+\documentclass[a4paper]{l3doc}
+\usepackage{ctex}
+\usepackage{etoolbox,hypdoc,booktabs}
 \AtBeginDocument{\CodelineIndex\EnableCrossrefs}
 \AtEndDocument{\PrintIndex}
 \AtBeginDocument{\RecordChanges}
@@ -97,19 +94,57 @@ LaTeX version 2005/12/01 or later.
 \AtBeginEnvironment{macrocode}{\linespread{1}}
 \renewcommand\glossaryname{版本历史}
 \GlossaryPrologue{\section*{\glossaryname}}
-\IndexPrologue{%
+\IndexPrologue{
   \section*{\indexname}
   \textit{斜体数字表示描述对应索引项的页码；
     带下划线的数字表示定义对应索引项的代码行号；
     罗马字体的数字表示使用对应索引项的代码行号。}}
 \setcounter{IndexColumns}{2}
-\def\DescribeOpt{\DescribeMacro}
-\def\cls{\textsf}
-\def\pkg{\textsf}
-\def\env{\texttt}
-\def\opt{\texttt}
-\def\ext{\texttt}
-\def\fname{\texttt}
+\usepackage{enumitem}
+\newlist{optdesc}{itemize}{1}
+\setlist[optdesc]{font=\small\ttfamily,leftmargin=0pt,labelsep=1em}
+\setlist{nosep}
+\usepackage{listings,xcolor,xcolor-material}
+\lstdefinestyle{style@base}
+{
+  basewidth       = 0.5em,
+  gobble          = 3,
+  lineskip        = 2pt,
+  frame           = l,
+  framerule       = 1pt,
+  framesep        = 0pt,
+  escapeinside    = {(*}{*)},
+  basicstyle      = \small\ttfamily,
+  keywordstyle    = \bfseries\color{MaterialIndigo},
+  commentstyle    = \itshape\color{MaterialGrey600},
+  stringstyle     = \color{MaterialRed},
+  backgroundcolor = \color{MaterialGrey50}
+}
+\lstdefinestyle{style@shell}
+{
+  style      = style@base,
+  rulecolor  = \color{MaterialPink},
+  language   = bash,
+  alsoletter = {-},
+  emphstyle  = \color{MaterialGreen800}
+}
+\lstdefinestyle{style@latex}
+{
+  style      = style@base,
+  rulecolor  = \color{MaterialIndigo},
+  language   = [LaTeX]TeX,
+  alsoletter = {*, -},
+  texcsstyle = *\color{MaterialDeepOrange},
+  emphstyle  = [1]\color{MaterialGreen800},
+  emphstyle  = [2]\color{MaterialTeal}
+}
+\lstnewenvironment{shellexample}[1][]{%
+  \lstset{style=style@shell, #1}}{}
+\lstnewenvironment{latexexample}[1][]{%
+  \lstset{style=style@latex, #1}}{}
+\newcommand\TFF{true\textup{\textbar\textbf{false}}}
+\newcommand\DescribeOpt{\DescribeMacro}
+\newcommand\opt{\texttt}
 \begin{document}
 \DocInput{\jobname.dtx}
 \linespread{1}
@@ -146,7 +181,9 @@ LaTeX version 2005/12/01 or later.
 % \DoNotIndex{\AtBeginDocument,\AtEndDocument}
 %
 % \changes{v1.0.0}{2021/06/11}{Initial version}
-% \changes{v1.0.4}{2021/12/25}{微调 \ext{.dtx} 文件结构}
+% \changes{v1.0.2}{2021/11/29}{更改学期、学院、考试时间的宏名}
+% \changes{v1.0.4}{2021/12/25}{微调 \file{.dtx} 文件结构}
+% \changes{v1.1.0}{2022/01/44}{用 \LaTeX3 重构模板}
 %
 % \GetFileInfo{\jobname.dtx}
 %
@@ -181,20 +218,18 @@ LaTeX version 2005/12/01 or later.
 % \pkg{totcount},
 % \pkg{tabularx},
 % \pkg{enumitem},
-% \pkg{tasks},
-% \pkg{tabto},
-% \pkg{etoolbox}.
+% \pkg{tasks}.
 %
 % \subsection{注意事项}
 %
 % \begin{itemize}
 %   \item
-%     请使用 XeLaTeX 编译方式, 使用其他编译方式时, 页面会有所变化.
+%     建议使用 XeLaTeX 编译.
 %   \item
 %     \pkg{ctex} 宏包应升级到 2.0 以上版本.
 %   \item
 %     得分栏列数根据 \opt{section} 计数器自动调整,
-%     请使用 \cmd{\section} 命令输入题目标题.
+%     请用 \tn{section} 命令输入题目标题.
 %   \item
 %     题目数最好不要超过 10.
 %   \item
@@ -214,16 +249,16 @@ LaTeX version 2005/12/01 or later.
 %     \toprule
 %     类别     & 文件           & 说明\\
 %     \midrule
-%     模板文件 & \fname{\jobname.dtx} & 模板代码文件\\
-%              & \fname{\jobname.cls} & 文档类文件\\
-%              & \fname{\jobname.ins} & 模板安装文件\\
-%              & \fname{\jobname.pdf} & 模板说明\\
-%              & \fname{README.md}    & 简要文本说明\\
+%     模板文件 & \file{\jobname.dtx} & 模板代码文件\\
+%              & \file{\jobname.cls} & 文档类文件\\
+%              & \file{\jobname.ins} & 模板安装文件\\
+%              & \file{\jobname.pdf} & 模板说明\\
+%              & \file{README.md}    & 简要文本说明\\
 %     \midrule
-%     示例文档 & \fname{exam.tex}     & 试卷源文件\\
-%              & \fname{exam.pdf}     & 试卷\\
-%              & \fname{answer.tex}   & 参考答案及评分标准源文件\\
-%              & \fname{answer.pdf}   & 参考答案及评分标准\\
+%     示例文档 & \file{exam.tex}     & 试卷源文件\\
+%              & \file{exam.pdf}     & 试卷\\
+%              & \file{answer.tex}   & 参考答案及评分标准源文件\\
+%              & \file{answer.pdf}   & 参考答案及评分标准\\
 %     \bottomrule
 %   \end{tabular}
 % \end{table}
@@ -232,165 +267,262 @@ LaTeX version 2005/12/01 or later.
 %
 % 本模板基于标准文档类 \cls{article} 编写.
 %
-% \subsection{文档选项}
+% 排版试卷时, 根据全局的文档选项 \opt{twoside}/\opt{oneside} 优化了装订线的位置.
+% \begin{optdesc}
+%   \item[oneside] 装订线设在奇数页.
+%   \item[twoside] 装订线设在模 4 余 0、1 的页面.
+% \end{optdesc}
 %
-% \DescribeOpt{answer}
-% 模板默认排版试卷,
-% 使用文档选项 \opt{answer} 则排版参考答案及评分标准.
+% \subsection{文档设置接口}
 %
-% \DescribeOpt{twoside}
-% \DescribeOpt{oneside}
-% 排版试卷时, 模板根据 \opt{twoside}/\opt{oneside} 选项对装订线的位置做了优化.
-% \opt{twoside} 时, 在模 4 余 0、1 的页面设装订线;
-% \opt{oneside} 时, 在奇数页设装订线.
+% \begin{function}[added=2022/01/14]{\cjluexamset}
+%   \begin{syntax}
+%     \tn{cjluexamset} = \Arg{键值列表}
+%   \end{syntax}
+%   文档设置的接口,
+%   参数是一组由逗号分隔的选项列表.
+%   选项通常是 <key>=<value> 的格式, 例如:
+% \end{function}
 %
-% \begin{table}[htbp]
-%   \caption{文档选项}
-%   \label{tab:opt}
-%   \centering
-%   \begin{tabular}{ll}
-%     \toprule
-%     选项            & 说明\\
-%     \midrule
-%     \opt{answer}    & 排版参考答案及评分标准\\
-%     \midrule
-%     \opt{oneside}   & 装订线设在奇数页\\
-%     \opt{twoside}   & 装订线设在模 4 余 0、1 的页面\\
-%     \bottomrule
-%   \end{tabular}
-% \end{table}
+% \begin{latexexample}[moretexcs={\cjluexamset},emph={[1],academicyear,term}]
+%   \cjluexamset
+%   {
+%     academicyear = {2020～2021},  % 学年
+%     term         = 1,             % 学期
+%   }
+% \end{latexexample}
 %
-% \clearpage
+% \subsection{设置选项}
 %
-% \subsection{试卷信息}
+% \paragraph{文档类别}
 %
-% \DescribeMacro{\AcademicYear}
-% \DescribeMacro{\Term}
-% \DescribeMacro{\Course}
-% \DescribeMacro{\Type}
-% \DescribeMacro{\College}
-% \DescribeMacro{\ifopen}
-% \DescribeMacro{\ifseat}
-% \DescribeMacro{\Thing}
-% \DescribeMacro{\TestYear}
-% \DescribeMacro{\TestMonth}
-% \DescribeMacro{\TestDay}
-% \DescribeMacro{\TestTime}
-% \DescribeMacro{\Class}
-% \DescribeMacro{\Teacher}
-% 排版试卷、参考答案时, 生成标题、页脚需要收集表~\ref{tab:info} 中的信息.
+% 包括: 试卷、参考答案及评分标准, 以及相应的英文版.
+% \begin{function}{answer,english}
+%   \begin{syntax}
+%     answer = <\TFF>
+%     english = <\TFF>
+%   \end{syntax}
+%   分别为排版参考答案、英文版文档的开关, 默认均关闭.
+% \end{function}
 %
-% \begin{table}[htbp]
-%   \caption{试卷信息}
-%   \label{tab:info}
-%   \centering
-%   \begin{tabular}{lll}
-%     \toprule
-%     范围      & 宏                  & 说明\\
-%     \midrule
-%     共用      & \cmd{\AcademicYear} & 学年\\
-%               & \cmd{\Term}         & 学期\\
-%               & \cmd{\Course}       & 科目\\
-%               & \cmd{\Type}         & 试卷类型\\
-%               & \cmd{\College}      & 开课学院\\
-%     \midrule
-%     试卷      & \cmd{\ifopen}       & 是否开卷\\
-%               & \cmd{\ifseat}       & 是否打印座位号\\
-%               & \cmd{\Thing}        & 可带入场的物品\\
-%               & \cmd{\TestYear}     & 考试时间-年\\
-%               & \cmd{\TestMonth}    & 考试时间-月\\
-%               & \cmd{\TestDay}      & 考试时间-日\\
-%               & \cmd{\TestTime}     & 考试时间-时\\
-%     \midrule
-%     参考答案  & \cmd{\Class}        & 学生班级\\
-%               & \cmd{\Teacher}      & 教师\\
-%     \bottomrule
-%   \end{tabular}
-% \end{table}
+% \paragraph{基本信息}
 %
-% 得分栏列数根据 \opt{section} 计数器自动调整.
-% 若输入题目标题时未使用 \cmd{\section} 命令,
+% 排版试卷或参考答案均需提供.
+% \begin{function}{academicyear,term,course,type}
+%   \begin{syntax}
+%     academicyear = <学年>
+%     term         = <学期>
+%     course       = <课程名>
+%     type         = <试卷类型>
+%   \end{syntax}
+% \end{function}
+%
+% \paragraph{可选信息}
+%
+% 可根据实际情况酌情提供.
+%
+% \begin{function}{college,openbook,seat,}
+%   \begin{syntax}
+%     college   = <开课学院>
+%     openbook  = <\TFF>
+%     seat      = <\TFF>
+%   \end{syntax}
+%   排版试卷时选填.
+%   \opt{openbook} 和 \opt{seat} 分别是开卷考试、座位号的开关, 默认关闭.
+% \end{function}
+%
+% \begin{function}{carryon,testyear,testmonth,testday,testtime}
+%   \begin{syntax}
+%     carryon   = <可带入考场的物品>
+%     testyear  = <考试时间-年>
+%     testmonth = <考试时间-月>
+%     testday   = <考试时间-日>
+%     testtime  = <考试时间-时>
+%   \end{syntax}
+%   仅排版中文版试卷时选填.
+% \end{function}
+%
+% \begin{function}{teacher,testdate,classroom}
+%   \begin{syntax}
+%     teacher   = <教师>
+%     testdate  = <考试时间>
+%     classroom = <考场>
+%   \end{syntax}
+%   仅排版英文版试卷时选填.
+% \end{function}
+%
+% \begin{function}{college,class,teacher}
+%   \begin{syntax}
+%     college = <开课学院>
+%     class   = <班级>
+%     teacher = <教师>
+%   \end{syntax}
+%   排版参考答案时选填.
+% \end{function}
+%
+% \paragraph{示例}
+%
+% 实际排版时, 应在导言区设置好选项. 可参考下面的示例.
+%
+% \begin{latexexample}[moretexcs={\cjluexamset},emph={[1]academicyear,term,course,type,college,openbook,seat}]
+%   \cjluexamset
+%   {
+%     academicyear = {2020～2021},  % 学年
+%     term         = {1},           % 学期
+%     course       = {高等数学},    % 科目
+%     type         = {A},           % 试卷类型
+%     college      = {理学院},      % 开课学院
+%     openbook ,                    % 开卷
+%     seat ,                        % 座位号
+%   }
+% \end{latexexample}
+%
+% \subsection{其他设置}
+%
+% \paragraph{得分栏}
+%
+% 列数会根据 \opt{section} 计数器自动调整.
+% 若输入题目标题时未使用 \tn{section} 命令,
 % 应手动设置 \opt{section} 计数器的值.
-%\begin{verbatim}
-%\setcounter{section}{9}
-%\end{verbatim}
+% \begin{latexexample}
+%   \setcounter{section}{9}
+% \end{latexexample}
 %
-% \subsection{题目标题}
+% \paragraph{题目标题}
 %
-% 模板设置 \opt{section} 为无衬线字体; 标题后不换行, 直接排版后续内容.
-% 以下命令分别抵消这两个设置.
-%\begin{verbatim}
-%\ctexset{section/format={}}
-%\ctexset{section/runin=false}
-%\end{verbatim}
+% 可设置 \opt{section} 为无衬线字体; 标题后不换行, 直接排版后续内容.
+% \begin{latexexample}[moretexcs={\ctexset},emph={[1]section,format,runin}]
+%   \ctexset{section/format=\sffamily}
+%   \ctexset{section/runin=true}
+% \end{latexexample}
 %
-% \subsection{字体}
+% \paragraph{字体}
 %
-% 中文字体由 \pkg{ctex} 宏包自动设置.
-% 在 XeLaTeX/LuaLaTeX 编译方式下, 可通过 \pkg{fontspec} 宏包的字体选择机制修改字体.
-%\begin{verbatim}
-%\setCJKmainfont{SimSun}
-%\setCJKsansfont{SimHei}
-%\end{verbatim}
+% 用 XeLaTeX/LuaLaTeX 编译时, 可通过 \pkg{fontspec} 宏包修改字体.
+% \begin{latexexample}[moretexcs={\setCJKmainfont,\setCJKsansfont}]
+%   \setCJKmainfont{SimSun}
+%   \setCJKsansfont{SimHei}
+% \end{latexexample}
 %
-% \subsection{列表}
+% \subsection{正文}
 %
-% 模板载入了 \pkg{enumitem} 宏包设置列表环境.
+% \paragraph{输出标题}
 %
-% 选择题的选项等行内列表可使用 \env{tasks} 或 \env{enumerate*} 环境实现.
-% \begin{itemize}
-%   \item
-%     使用 \env{tasks} 环境.
-%     下面代码中的 \opt{(3)} 表示每行设 3 个制表位,
-%     环境内的 \cmd{\task*(2)} 表示当前项占 2 个制表位.
-%\begin{verbatim}
-%\begin{tasks}(3)
-%  \task A
-%  \task A
-%  \task A
-%  \task*(2) A
-%  \task A
-%\end{tasks}
-%\end{verbatim}
-%   \item
-%     使用 \env{enumerate*} 环境.
-%     下面代码中的 \opt{cols=2} 表示每行设 2 个制表位.
-%\begin{verbatim}
-%\begin{enumerate*}[cols=2]
-%  \item A
-%  \item A
-%\end{enumerate*}
-%\end{verbatim}
-% \end{itemize}
+% 模板重定义了 \tn{maketitle} 命令生成标题.
+%
+% \begin{function}{\maketitle}
+%   生成标题、试卷信息、得分栏、座位号等.
+% \end{function}
+%
+% \paragraph{下划线}
+%
+% 填空题的水平横线可用 \tn{Fill} 命令.
+%
+% \begin{function}[added=2021/06/11,updated=2022/01/14]{\Fill}
+%   \begin{syntax}
+%     \tn{Fill} \oarg{长度} \marg{内容}
+%   \end{syntax}
+%   生成指定长度的带下划线的文本.
+%   <长度> 的缺省值是 \opt{4em};
+%   它大于 <内容> 的自然长度时, 文本居中;
+%   否则延长下划线.
+% \end{function}
+%
+% \paragraph{列表}
+%
+% 选择题的选项可使用 \env{tasks} 环境.
+% 下面环境选项中的 \opt{(2)} 表示每行设 2 个制表位.
+% 环境中的 \tn{task}|*(2)| 表示该项占两个制表位.
+% \begin{latexexample}[moretexcs={\task},emph={[1]tasks}]
+%   \begin{tasks}(2)
+%     \task A
+%     \task A
+%     \task*(2) A
+%     \task*(2) A
+%   \end{tasks}
+% \end{latexexample}
 %
 % \section{实现代码}
 %
 %    \begin{macrocode}
 %<*class>
+%<@@=cjluexam>
 %    \end{macrocode}
 %
-% \subsection{文档选项}
-%
-% 基于基础文档类 \cls{article} 设计模板.
-%
-% \DescribeOpt{answer}
-% \DescribeMacro{\ifanswer}
-% 声明文档选项 \opt{answer}.
-%
-% \cmd{\ifanswer} 取 \opt{true} 时排版参考答案, 取 \opt{false} 时排版试卷.
-%
-%    \begin{macrocode}
-\newif\ifanswer
-\DeclareOption{answer}{\answertrue}
-%    \end{macrocode}
-%
-% 处理文档选项. 载入 \cls{article} 文档类, 并把其他文档选项传递给它.
-% 命令 \cmd{\ProcessOptions} 结束选项声明.
+% 载入 \cls{article} 文档类, 并把文档选项传递给它.
 %    \begin{macrocode}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions
 \LoadClass{article}
 %    \end{macrocode}
+%
+% \subsection{选项}
+%
+%    \begin{macrocode}
+\RequirePackage{expl3,xparse}
+\keys_define:nn {cjluexam}
+{
+%    \end{macrocode}
+% \begin{macro}{answer,english}
+% 文档类别: 参考答案、英文版.
+%    \begin{macrocode}
+  answer        .bool_gset:N  = \g_@@_answer_bool,
+  answer        .initial:n    = false,
+  english       .bool_gset:N  = \g_@@_english_bool,
+  english       .initial:n    = false,
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{academicyear,term,course,type}
+% 基本信息: 学年、学期、课程名、试卷类型.
+%    \begin{macrocode}
+  academicyear  .tl_gset:N = \g_@@_academicyear_tl,
+  academicyear  .initial:n = {20\underline{\qquad}\~{}20\underline{\qquad}},
+  term          .tl_gset:N = \g_@@_term_tl,
+  term          .initial:n = \underline{\quad},
+  course        .tl_gset:N = \g_@@_course_tl,
+  course        .initial:n = \qquad\qquad\qquad,
+  type          .tl_gset:N = \g_@@_type_tl,
+  type          .initial:n = \quad,
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{college,teacher}
+% 开课信息: 开课学院、教师.
+%    \begin{macrocode}
+  college       .tl_gset:N = \g_@@_college_tl,
+  teacher       .tl_gset:N = \g_@@_teacher_tl,
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{openbook,seat}
+% 试卷信息: 开闭卷、座位号.
+%    \begin{macrocode}
+  openbook      .bool_gset:N  = \g_@@_openbook_bool,
+  openbook      .initial:n    = false,
+  seat          .bool_gset:N  = \g_@@_seat_bool,
+  seat          .initial:n    = false,
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}
+% {class,classroom,carryon,testdate,testyear,testmonth,testday,testtime}
+% 考试信息: 考生班级、考场、允许带入考场的物品、考试时间.
+%    \begin{macrocode}
+  class         .tl_gset:N = \g_@@_class_tl,
+  classroom     .tl_gset:N = \g_@@_classroom_tl,
+  carryon       .tl_gset:N = \g_@@_carryon_tl,
+  testdate      .tl_gset:N = \g_@@_testdate_tl,
+  testyear      .tl_gset:N = \g_@@_testyear_tl,
+  testmonth     .tl_gset:N = \g_@@_testmonth_tl,
+  testday       .tl_gset:N = \g_@@_testday_tl,
+  testtime      .tl_gset:N = \g_@@_testtime_tl,
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\cjluexamset}
+% 文档设置的接口.
+%    \begin{macrocode}
+\NewDocumentCommand \cjluexamset { m } { \keys_set:nn { cjluexam } { #1 } }
+%    \end{macrocode}
+% \end{macro}
 %
 % \subsection{中文支持}
 %
@@ -414,314 +546,353 @@ LaTeX version 2005/12/01 or later.
 \RequirePackage[a4paper,margin=30mm,footskip=6mm]{geometry}
 %    \end{macrocode}
 %
-% \begin{macro}{\cjluexam@foot}
-%
-% \changes{v1.0.2}{2021/11/15}{改用宏命令储存页脚内容}
-%
-% 页脚内容.
-% 其中, 总页数依赖 \pkg{lastpage} 宏包,
-% \cmd{\cjluexam@binding} 设装订线.
-%    \begin{macrocode}
-\RequirePackage{lastpage}
-\ifanswer
-  \def\cjluexam@foot
-  {《\Course》课程试卷（\Type）参考答案及评分标准\quad
-  第 \thepage 页~共 \pageref{LastPage} 页}
-\else
-  \def\cjluexam@foot
-  {\cjluexam@binding 中国计量大学 \AcademicYear 学年第 \Term 学期%
-  《\Course》课程考试试卷（\Type）第 \thepage 页~共 \pageref{LastPage} 页}
-\fi
-%    \end{macrocode}
-% \end{macro}
-%
-% \changes{v1.0.1}{2021/06/19}{改用 \pkg{lastpage} 宏包打印总页数}
-%
 % 载入 \pkg{titleps} 宏包设置页眉页脚.
-% 其中 \cmd{\setfoot} 的三个参数分别表示左侧、中间、右侧的内容;
+% 其中 \tn{setfoot} 的三个参数分别表示左侧、中间、右侧的内容;
 %    \begin{macrocode}
 \RequirePackage{titleps}
 \newpagestyle{main}[\zihao{-5}]
-  {\footrule\setfoot{}{\fangsong\cjluexam@foot}{}}
+{\footrule\setfoot{}{\fangsong\c_@@_foot_tl}{}}
 \pagestyle{main}
 %    \end{macrocode}
 %
-% \begin{macro}{\cjluexam@binding}
+% \changes{v1.0.1}{2021/06/19}{总页数改用 \pkg{lastpage} 宏包}
+% \changes{v1.0.2}{2021/11/15}{定义宏命令储存页脚内容}
+%
+% \begin{macro}{\c_@@_foot_tl}
+% 页脚内容.
+% 其中, 总页数依赖 \pkg{lastpage} 宏包,
+% \cs{@@_binding:} 设装订线.
+%    \begin{macrocode}
+\RequirePackage{lastpage}
+\tl_const:Nn \c_@@_foot_tl
+{
+  \bool_if:NTF \g_@@_answer_bool
+  {
+    \bool_if:NTF \g_@@_english_bool
+    {
+      《 \g_@@_course_tl 》
+      Examination~paper~reference~answers~and~grading~standards
+      \quad Page~\thepage/\pageref{LastPage}
+    }
+    {
+      《 \g_@@_course_tl 》课程试卷（ \g_@@_type_tl ）
+      参考答案及评分标准
+      \quad 第~\thepage~页 \enskip 共~\pageref{LastPage}~页
+    }
+  }
+  {
+    \@@_binding:
+    \bool_if:NTF \g_@@_english_bool
+    {
+      China~Jiliang~University~
+      \g_@@_academicyear_tl{}~Term~(\g_@@_term_tl)
+      《 \g_@@_course_tl 》Test~Paper~(\g_@@_type_tl)
+      \quad Page~\thepage/\pageref{LastPage}
+    }
+    {
+      中国计量大学
+      \g_@@_academicyear_tl 学年第 \g_@@_term_tl 学期
+      《 \g_@@_course_tl 》课程考试试卷（ \g_@@_type_tl ）
+      第~\thepage~页 \enskip 共~\pageref{LastPage}~页
+    }
+  }
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_binding:}
 % 设装订线.
 % 文档选项为 \opt{twoside} 时, 装订线设在模 4 余 0、1 的页面;
 % 为 \opt{oneside} 时, 装订线设在奇数页.
 %    \begin{macrocode}
 \if@twoside
-  \newcommand\cjluexam@binding{%
-    \ifcase\numexpr\value{page}-((\value{page}-2)/4)*4\relax
-      \cjluexam@drawbinding[1]\or\cjluexam@drawbinding\relax
-    \fi
+  \cs_new:Nn \@@_binding:
+  {
+    \int_case:nn { \int_mod:nn { \value{page} } {4} }
+    {
+      {0} { \@@_drawbinding:n{ 1} }
+      {1} { \@@_drawbinding:n{-1} }
+    }
   }
 \else
-  \newcommand\cjluexam@binding
-  {\ifodd\value{page}\relax\cjluexam@drawbinding\fi}
+  \cs_new:Nn \@@_binding:
+  { \int_if_odd:nT { \value{page} } { \@@_drawbinding:n{-1} } }
 \fi
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\cjluexam@drawbinding}
+% \begin{macro}{\@@_drawbinding:n}
 % 装订线的具体绘制.
-% 参数取 \opt{-1} 时装订线在左侧, 参数取 \opt{1} 时在右侧.
+% \opt{\#1 = -1} 时在左侧, \opt{\#1 = 1} 时在右侧.
 %    \begin{macrocode}
 \RequirePackage{graphicx,tikz}
-\newcommand\cjluexam@drawbinding[1][-1]{%
-  \begin{tikzpicture}[remember picture,overlay]
+\cs_new:Nn \@@_drawbinding:n
+{
+  \begin{tikzpicture}[remember~picture,overlay]
     \zihao{5}\sffamily
-    \path (current page.center)
+    \path (current~page.center)
       node
       [
-        text width=\textheight,
+        text~width=\textheight,
         rotate=-90,
         yshift=.5*#1*\textwidth+#1*.5cm,
       ]
-      {%
-        \dotfill\raisebox{-.45em}{\rotatebox{90}{装}}%
-        \dotfill\raisebox{-.45em}{\rotatebox{90}{订}}%
+      {
+        \dotfill\raisebox{-.45em}{\rotatebox{90}{装}}
+        \dotfill\raisebox{-.45em}{\rotatebox{90}{订}}
         \dotfill\raisebox{-.45em}{\rotatebox{90}{线}}\dotfill
       };
-  \end{tikzpicture}%
+  \end{tikzpicture}
 }
 %    \end{macrocode}
 % \end{macro}
 %
 % \subsection{标题}
 %
-% \begin{macro}{\AcademicYear}
-% \begin{macro}{\Term}
-% \changes{v1.0.2}{2021/11/29}{更改学期、学院、考试时间的宏名}
-% \begin{macro}{\Course}
-% \begin{macro}{\Type}
-% \begin{macro}{\College}
-% 排版试卷、参考答案时, 生成标题都需要收集的信息.
-%    \begin{macrocode}
-\def\AcademicYear{} % 学年
-\def\Term{}         % 学期
-\def\Course{}       % 科目
-\def\Type{}         % 试卷类型
-\def\College{}      % 开课学院
-%    \end{macrocode}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-%
-% \begin{macro}{\ifopen}
-% \begin{macro}{\ifseat}
-% \begin{macro}{\Thing}
-% \begin{macro}{\TestYear}
-% \begin{macro}{\TestMonth}
-% \begin{macro}{\TestDay}
-% \begin{macro}{\TestTime}
-% 排版试卷时, 生成标题需要收集的信息.
-%    \begin{macrocode}
-\newif\ifopen       % 是否开卷
-\newif\ifseat       % 是否打印座位号
-\def\Thing{}        % 可带入场的物品
-\def\TestYear{}     % 考试时间-年
-\def\TestMonth{}    % 考试时间-月
-\def\TestDay{}      % 考试时间-日
-\def\TestTime{}     % 考试时间-时
-%    \end{macrocode}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-%
-% \begin{macro}{\Class}
-% \begin{macro}{\Teacher}
-% 排版参考答案时, 生成标题需要收集的信息.
-%    \begin{macrocode}
-\def\Class{}        % 学生班级
-\def\Teacher{}      % 教师
-%    \end{macrocode}
-% \end{macro}
-% \end{macro}
-%
 % \begin{macro}{\maketitle}
-% 重定义 \cmd{\maketitle} 命令输出标题、考生相关信息、得分栏、座位号等.
+% 重定义 \tn{maketitle} 输出标题、试卷信息.
 %    \begin{macrocode}
-\RequirePackage{totcount}
-\regtotcounter{section}
-\ifanswer
-  \renewcommand{\maketitle}{%
-    \begingroup
-    \parindent0pt\linespread{1.5}\zihao{-4}%
-    \begin{center}
-      \zihao{4}\bfseries\fangsong
-      中国计量大学 \AcademicYear 学年第 \Term 学期\\
-      《\Course》课程试卷（\Type）\\
+\RenewDocumentCommand \maketitle {}
+{
+  \begin{center}
+    \linespread{1.5} \zihao{4} \bfseries \fangsong
+    \c_@@_title_tl
+  \end{center}
+  \begin{flushleft}
+    \linespread{1.5} \zihao{-4}
+    \c_@@_info_tl
+    \bool_if:NF \g_@@_answer_bool
+    {
+      \par \@@_score:
+      \bool_if:NT \g_@@_seat_bool { \@@_seat: }
+    }
+  \end{flushleft}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\c_@@_title_tl}
+% 试卷标题内容.
+%    \begin{macrocode}
+\tl_const:Nn \c_@@_title_tl
+{
+  \bool_if:NTF \g_@@_answer_bool
+  {
+    \bool_if:NTF \g_@@_english_bool
+    {
+      China~Jiliang~University~
+      \g_@@_academicyear_tl{}~Term~(\g_@@_term_tl)\\
+      《 \g_@@_course_tl 》Answer~Sheet\\
+      \textnormal{Examination~paper~reference~answers~and~grading~standards}
+    }
+    {
+      中国计量大学
+      \g_@@_academicyear_tl 学年第 \g_@@_term_tl 学期\\
+      《 \g_@@_course_tl 》课程试卷（ \g_@@_type_tl ）\\
       参考答案及评分标准
-    \end{center}%
-    开课二级学院：\Fill{9em}{\College}，
-    学生班级：\Fill{5em}{\Class}，
-    教师：\Fill{6em}{\Teacher}
-    \endgroup
+    }
   }
-\else
-  \renewcommand{\maketitle}{%
-    \begingroup
-    \parindent0pt\linespread{1.5}\zihao{-4}%
-    \begin{center}
-      \ifseat\cjluexam@seat\fi
-      \zihao{4}\bfseries\fangsong
-      中国计量大学 \AcademicYear 学年第 \Term 学期\\
-      《\Course》课程考试试卷（\Type）
-    \end{center}%
-    开课二级学院：\Fill{9em}{\College}，%
-    考试时间：\mbox{%
-      \Fill{3em}{\TestYear}年\Fill{2em}{\TestMonth}月%
-      \Fill{2em}{\TestDay }日\Fill{2em}{\TestTime }时}\\
-    考试形式：%
-    \setlength{\fboxsep}{-0.4pt}%
-    \ifopen
-      闭卷 \fbox{\rule[0.683em]{0.683em}{0em}}、%
-      开卷 \rule{0.683em}{0.683em}，%
-    \else
-      闭卷 \rule{0.683em}{0.683em}、%
-      开卷 \fbox{\rule[0.683em]{0.683em}{0em}}，%
-    \fi
-    \mbox{允许带\Fill{17em}{\Thing}入场}\\
-    考生姓名：\Fill{5.2em}{}
-    学号：\Fill{5.2em}{}
-    专业：\Fill{5.2em}{}
-    班级：\Fill{5.2em}{}
-    \cjluexam@score{\totvalue{section}}%
-    \endgroup
+  {
+    \bool_if:NTF \g_@@_english_bool
+    {
+      China~Jiliang~University~
+      \g_@@_academicyear_tl{}~Term~(\g_@@_term_tl)\\
+      《 \g_@@_course_tl 》Test~Paper~(\g_@@_type_tl)
+    }
+    {
+      中国计量大学
+      \g_@@_academicyear_tl 学年第 \g_@@_term_tl 学期\\
+      《 \g_@@_course_tl 》课程考试试卷（ \g_@@_type_tl ）
+    }
   }
-\fi
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\c_@@_info_tl}
+% 试卷信息.
+%    \begin{macrocode}
+\tl_const:Nn \c_@@_info_tl
+{
+  \bool_if:NTF \g_@@_answer_bool
+  {
+    \bool_if:NTF \g_@@_english_bool
+    {
+      College:  \Fill[35mm]{ \g_@@_college_tl } \hfill
+      Class:    \Fill[30mm]{ \g_@@_class_tl   } \hfill
+      Teacher:  \Fill[30mm]{ \g_@@_teacher_tl }
+    }
+    {
+      开课二级学院： \Fill[35mm] { \g_@@_college_tl }， \hfill
+      学生班级：     \Fill[21mm] { \g_@@_class_tl   }， \hfill
+      教师：         \Fill[21mm] { \g_@@_teacher_tl }
+    }
+  }
+  {
+    \setlength{\fboxrule}{0.04em}
+    \setlength{\fboxsep}{-0.04em}
+    \bool_if:NTF \g_@@_english_bool
+    {
+      \@@_fill:nnn{70mm}{College:  }{\g_@@_college_tl } \hfill
+      \@@_fill:nnn{70mm}{Teacher:  }{\g_@@_teacher_tl } \\
+      \@@_fill:nnn{70mm}{Test~Date:}{\g_@@_testdate_tl} \hfill
+      \@@_fill:nnn{70mm}{Test~Classroom:}{\g_@@_classroom_tl}\\
+      Examination~Form:~
+      \bool_if:NTF \g_@@_openbook_bool
+      {
+        Closed-book~\fbox{\rule[0.683em]{0.683em}{0em}}、
+        Open-book~  \rule{0.683em}{0.683em} \\
+      }
+      {
+        Closed-book~\rule{0.683em}{0.683em}、
+        Open-book~  \fbox{\rule[0.683em]{0.683em}{0em}} \\
+      }
+      Name:  \Fill[25mm]{} \hfill
+      ID:    \Fill[25mm]{} \hfill
+      Major: \Fill[25mm]{} \hfill
+      Grade: \Fill[25mm]{}
+    }
+    {
+      开课二级学院：\Fill[35mm]{ \g_@@_college_tl }， \hfill
+      考试时间：
+      \Fill[12mm]{ \g_@@_testyear_tl  } 年
+      \Fill[ 8mm]{ \g_@@_testmonth_tl } 月
+      \Fill[ 8mm]{ \g_@@_testday_tl   } 日
+      \Fill[ 9mm]{ \g_@@_testtime_tl  } 时 \\
+      考试形式：
+      \bool_if:NTF \g_@@_openbook_bool
+      {
+        闭卷~\fbox{\rule[0.683em]{0.683em}{0em}}、
+        开卷~\rule{0.683em}{0.683em}，
+      }
+      {
+        闭卷~\rule{0.683em}{0.683em}、
+        开卷~\fbox{\rule[0.683em]{0.683em}{0em}}，
+      } \hfill
+      允许带 \Fill[71mm]{\g_@@_carryon_tl} 入场 \\
+      考生姓名：\Fill[21mm]{} \hfill
+      学号：    \Fill[21mm]{} \hfill
+      专业：    \Fill[21mm]{} \hfill
+      班级：    \Fill[21mm]{}
+    }
+  }
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_fill:nnn}
+% 指定长度的文本.
+% 参数 \opt{\#1} 是指定长度,
+% 参数 \opt{\#2} 是前置文本,
+% 参数 \opt{\#3} 是下划线文本.
+%    \begin{macrocode}
+\cs_new_protected:Nn \@@_fill:nnn
+{
+  \hbox_set:Nn \l_tmpa_box{#2}
+  \dim_set:Nn \l_tmpa_dim {#1 - \box_wd:N \l_tmpa_box}
+  \mode_leave_vertical:
+  \box_use:N \l_tmpa_box
+  \hbox_set:Nn \l_tmpa_box{#3}
+  \box_set_dp:Nn \l_tmpa_box{0pt}
+  \dim_set:Nn \l_tmpa_dim { \dim_max:nn {\l_tmpa_dim} {\box_wd:N\l_tmpa_box} }
+  \underline{ \makebox[\l_tmpa_dim]{\box_use:N \l_tmpa_box} }
+}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\Fill}
-% \begin{macro}{\cjluexam@length}
-% 带下划线的指定长度文本.
+% 指定长度的带下划线文本.
 % 文本长度小于指定长度时, 文本居中; 否则延长下划线.
 % 参数 \opt{\#1} 是下划线的指定长度,
 % 参数 \opt{\#2} 是指定的文本.
-%
-% \cmd{\cjluexam@length} 是辅助长度变量, 用于条件判断.
 %    \begin{macrocode}
-\newlength\cjluexam@length
-\newcommand\Fill[2]{%
-  \settowidth{\cjluexam@length}{#2}%
-  \ifdim\cjluexam@length>#1\relax
-    \underline{\mbox{#2}}%
-  \else
-    \underline{\makebox[#1]{#2}}%
-  \fi
+\NewDocumentCommand \Fill { O{4em} m }
+{
+  \hbox_set:Nn \l_tmpa_box{#2}
+  \box_set_dp:Nn \l_tmpa_box{0pt}
+  \dim_set:Nn \l_tmpa_dim { \dim_max:nn{#1}{\box_wd:N \l_tmpa_box} }
+  \underline{ \makebox[\l_tmpa_dim]{\box_use:N \l_tmpa_box} }
 }
 %    \end{macrocode}
 % \end{macro}
-% \end{macro}
 %
-% \begin{macro}{\cjluexam@score}
-% \changes{v1.0.2}{2021/11/16}{通过定义列格式简化操作}
-% 生成列数可变的得分栏.
+% \changes{v1.0.2}{2021/11/16}{定义列格式说明符简化操作}
+%
+% \begin{macro}{\@@_score:}
+% 得分栏. 列数会根据 \opt{section} 计数器自动调整.
 %    \begin{macrocode}
-\RequirePackage{tabularx}
-\newcommand\cjluexam@score[1]{%
-  \begin{flushleft}
-    \edef\cjluexam@num{#1}%
-    \ifnum\cjluexam@num<1\relax\def\cjluexam@num{1}\fi
-    \ifnum\cjluexam@num<7\relax
-      \newcolumntype{M}{|*{\numexpr\cjluexam@num+2}
-      {>{\centering\arraybackslash}X|}}%
-    \else
-      \ifnum\cjluexam@num<11\relax
-        \newcolumntype{M}{|c|*{\numexpr\cjluexam@num+1}
-        {@{}>{\centering\arraybackslash}X@{}|}}%
-      \else
-        \newcolumntype{M}{|c|*{\cjluexam@num}
-        {@{}>{\centering\arraybackslash}X@{}|}c|}%
-      \fi
-    \fi
-    \begin{tabularx}{\textwidth}{M}
+\RequirePackage{tabularx,totcount}
+\regtotcounter{section}
+\cs_new_protected:Nn \@@_score:
+{
+  \int_set:Nn \l_tmpa_int {\totvalue{section}}
+  \int_compare:nNnT {\l_tmpa_int} < {1} {\int_set:Nn \l_tmpa_int {1}}
+  \newcolumntype{A}{@{}>{\centering\arraybackslash}X@{}}
+  \int_compare:nNnTF {\l_tmpa_int} < {7}
+  { \newcolumntype{B}{|A|*{\l_tmpa_int}{A|}A|} }
+  {
+    \int_compare:nNnTF {\l_tmpa_int} < {10}
+    { \newcolumntype{B}{|c|*{\l_tmpa_int}{A|}A|} }
+    { \newcolumntype{B}{|c|*{\l_tmpa_int}{A|}c|} }
+  }
+  \bool_if:NTF \g_@@_english_bool
+  {
+    \begin{tabularx} {\linewidth} {B}
       \hline
-      题序   & \cjluexam@Ncell{1}{\cjluexam@num}{2} & 总分 \\\hline
-      得分   & \cjluexam@Ncell{1}{\cjluexam@num}{0} &      \\\hline
-      评卷人 & \cjluexam@Ncell{1}{\cjluexam@num}{0} &      \\\hline
-    \end{tabularx}%
-  \end{flushleft}%
+      Item    \int_step_inline:nn{\l_tmpa_int}{&\int_to_Roman:n{##1}}
+                                                  & Total \\\hline
+      Score   \int_step_inline:nn{\l_tmpa_int}{&} &       \\\hline
+      Teacher \int_step_inline:nn{\l_tmpa_int}{&} &       \\\hline
+    \end{tabularx}
+  }
+  {
+    \begin{tabularx} {\linewidth} {B}
+      \hline
+      题序   \int_step_inline:nn{\l_tmpa_int}{&\zhnumber{##1}}
+                                                  & 总分 \\\hline
+      得分   \int_step_inline:nn{\l_tmpa_int}{&}  &      \\\hline
+      评卷人 \int_step_inline:nn{\l_tmpa_int}{&}  &      \\\hline
+    \end{tabularx}
+  }
 }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\cjluexam@Ncell}
-% \changes{v1.0.2}{2021/11/16}{修正命名笔误}
-% \begin{macro}{\cjluexam@gobble}
-% 生成指定列数的单元格的格式字符串.
-% 其中, 参数 \opt{\#1} 一定要取 \opt{1}, 表示起始序号.
-% 参数 \opt{\#2} 是指定的列数.
-% 参数 \opt{\#3} 取 \opt{0} 时表示单元格内部无内容;
-% 取 \opt{1} 时输出递增数列;
-% 取其他值时输出中文数字形式的递增数列.
-%
-% 辅助命令 \cmd{\cjluexam@gobble} 的功能就是丢弃它的参数.
-%
-% 该方案参考了
-% \href{https://tex.stackexchange.com/questions/165625/how-to-fill-a-dynamically-generated-table-with-dynamic-content}{StackExchange}
-% 与
-% \href{https://www.overleaf.com/learn/latex/Articles/How_does_%5Cexpandafter_work:_A_detailed_macro_case_study}{Overleaf}
-% 的代码.
-% 其他方案可参考\href{https://zhuanlan.zhihu.com/p/58103339}{知乎}.
-%
-%    \begin{macrocode}
-\newcommand\cjluexam@gobble[1]{}
-\newcommand\cjluexam@Ncell[3]{%
-  \ifnum  #1<2 \expandafter\cjluexam@gobble\fi &
-  \ifcase #3 \or #1\else\zhnumber{#1}\fi
-  \ifnum  #1<#2
-    \expandafter\cjluexam@Ncell
-    \expandafter{\the\numexpr1+#1\expandafter}%
-    \expandafter{\the\numexpr  #2\expandafter}%
-    \expandafter{\the\numexpr  #3\expandafter}%
-  \fi
-}
-%    \end{macrocode}
-% \end{macro}
-% \end{macro}
-%
-% \begin{macro}{\cjluexam@seat}
-% 打印座位号.
-% 代码中的坐标以页面左上角为原点.
+% \begin{macro}{\@@_seat:}
+% 座位号. 代码中的坐标以页面左上角为原点.
 %    \begin{macrocode}
 \RequirePackage{tikz}
-\newcommand\cjluexam@seat{%
+\cs_new:Nn \@@_seat:
+{
   \begin{tikzpicture}
-    [remember picture,overlay,ampersand replacement=\&]
+    [remember~picture,overlay,ampersand~replacement=\&]
     \zihao{-4}
-    \matrix[nodes={draw,inner ysep=8pt}]
-      at ([shift={(25mm,-25mm)}]current page.north west)
-      {\node{\phantom{座位号}}; \& \node{座位号};\\};
-  \end{tikzpicture}%
+    \matrix[nodes={draw,inner~ysep=8pt}]
+      at ([shift={(25mm,-25mm)}]current~page.north~west)
+      { \node{座位号}; \& \node{\phantom{座位号}}; \\ };
+  \end{tikzpicture}
 }
 %    \end{macrocode}
 % \end{macro}
 %
 % \subsection{题目标题}
 %
-% 设置 \cmd{\section} 级标题的格式.
+% 设置 \tn{section} 级标题的格式.
 % 其中 \opt{runin=true} 表示标题后不换行, 直接排版后续内容.
 %    \begin{macrocode}
-\ctexset{section={
-  name={,、},
-  number=\chinese{section},
-  format=\sffamily,
-  aftername={},
-  aftertitle={},
-  beforeskip=1ex plus .5ex minus .5ex,
-  afterskip =1ex plus .5ex minus .5ex,
-  runin=true,
-}}
+\ctexset
+{
+  section =
+  {
+    name={,、},
+    number=\chinese{section},
+    format={},
+    aftername={},
+    aftertitle={},
+    beforeskip=1ex plus .5ex minus .5ex,
+    afterskip =1ex plus .5ex minus .5ex,
+  }
+}
 %    \end{macrocode}
 %
 % \subsection{列表}
@@ -734,34 +905,20 @@ LaTeX version 2005/12/01 or later.
 \setlist{nosep,leftmargin=*}
 %    \end{macrocode}
 %
-% 选择题的选项等行内列表可使用 \env{enumerate*} 环境实现.
-% 该方案需要配合 \pkg{tabto} 提供的 \cmd{\tab} 命令实现.
-% 其中, \cmd{\NumTabs} 命令设置的制表位个数.
-%
-% 该方案的缺点: \env{enumerate*} 不会在环境开始的时候自动换行;
-% 列表项的间距就是正文的行间距, 不能个性化调整.
-% 这里的解决方案是, 在环境开始的时候添加 \cs{par} 命令.
-% 但若该环境紧跟着 \cmd{\section} 等章节命令,
-% 且开启了 \opt{runin} 选项时, 仍不能自动换行.
-%    \begin{macrocode}
-\RequirePackage{tabto}
-\NumTabs{1}
-\SetEnumitemKey{cols}{before=\NumTabs{#1}}
-\setlist[enumerate]{itemjoin=\tab}
-\setlist[enumerate,2]{label=(\Alph*),widest=A}
-\RequirePackage{etoolbox}
-\AtBeginEnvironment{enumerate*}{\par\noindent}
-%    \end{macrocode}
-%
-% 选择题的选项等行内列表可使用 \env{tasks} 环境实现.
+% 选择题的选项可使用 \env{tasks} 环境.
 %    \begin{macrocode}
 \RequirePackage{tasks}
 \settasks{before-skip=0pt,after-skip=0pt,after-item-skip=0pt}
-\ifanswer
-  \settasks{label=\arabic*.,label-width=1em,label-offset=.2em,item-indent=1.2em}
-\else
-  \settasks{label=(\Alph*),label-width=1.6em,label-offset=.2em,item-indent=1.8em}
-\fi
+\AtBeginDocument
+{
+  \bool_if:NTF \g_@@_answer_bool
+  {
+    \settasks{label=\arabic*.,label-width=1em,label-offset=.2em,item-indent=1.2em}
+  }
+  {
+    \settasks{label=(\Alph*),label-width=1.6em,label-offset=.2em,item-indent=1.8em}
+  }
+}
 %    \end{macrocode}
 %
 % \subsection{其他}
@@ -776,11 +933,12 @@ LaTeX version 2005/12/01 or later.
 %
 % 显式公式前后的空白.
 %    \begin{macrocode}
-\appto\normalsize{%
-  \setlength\abovedisplayskip{.2em plus .2em minus .2em}%
-  \setlength\belowdisplayskip{.2em plus .2em minus .2em}%
-  \setlength\abovedisplayshortskip{0em plus .1em}%
-  \setlength\belowdisplayshortskip{0em plus .1em}%
+\AtBeginDocument
+{
+  \setlength\abovedisplayskip{.2em plus .2em minus .2em}
+  \setlength\belowdisplayskip{.2em plus .2em minus .2em}
+  \setlength\abovedisplayshortskip{0em plus .1em}
+  \setlength\belowdisplayshortskip{0em plus .1em}
 }
 %    \end{macrocode}
 %
@@ -802,29 +960,6 @@ LaTeX version 2005/12/01 or later.
 \def\fps@figure{!htb}
 \def\fps@table{!htb}
 %    \end{macrocode}
-%
-% \changes{v1.0.4}{2021/12/25}{定义表格的列格式说明符}
-%
-% \DescribeOpt{C,L,R,Y,P}
-% 定义表格的列格式说明符.
-% 它们分别对应 \opt{c,l,r,X,p}, 确保进入显式公式模式.
-%    \begin{macrocode}
-\newcolumntype{C}{>{\(\displaystyle{}}c<{{}\)}}
-\newcolumntype{L}{>{\(\displaystyle{}}l<{{}\)}}
-\newcolumntype{R}{>{\(\displaystyle{}}r<{{}\)}}
-\newcolumntype{Y}{>{\(\displaystyle{}}X<{{}\)}}
-\newcolumntype{P}[1]{>{\(\displaystyle{}}p{#1}<{{}\)}}
-%    \end{macrocode}
-%
-% \begin{macro}{\cdotfill}
-% \changes{v1.0.4}{2021/12/25}{居中的前导符}
-% 类似于 \cmd{\dotfill}, 圆点居中的前导符.
-% 可选参数 \opt{\#1} 是圆点间距, 默认为 \opt{.5em}.
-%    \begin{macrocode}
-\newcommand{\cdotfill}[1][.5em]
-  {\leavevmode\cleaders\hbox to #1{\hss$\cdot$\hss}\hfill\kern0pt}
-%    \end{macrocode}
-% \end{macro}
 %
 %    \begin{macrocode}
 %</class>
