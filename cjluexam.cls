@@ -20,39 +20,39 @@
 %% 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesExplClass{cjluexam}
-  {2022/01/14}{1.1.0}{CJLU Exam Template}
+  {2022/02/14}{1.1.1}{CJLU Exam Template}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions
 \LoadClass{article}
 \RequirePackage{expl3,xparse}
 \keys_define:nn {cjluexam}
 {
-  answer        .bool_gset:N  = \g__cjluexam_answer_bool,
-  answer        .initial:n    = false,
-  english       .bool_gset:N  = \g__cjluexam_english_bool,
-  english       .initial:n    = false,
-  academicyear  .tl_gset:N = \g__cjluexam_academicyear_tl,
-  academicyear  .initial:n = {20\underline{\qquad}\~{}20\underline{\qquad}},
-  term          .tl_gset:N = \g__cjluexam_term_tl,
-  term          .initial:n = \underline{\quad},
-  course        .tl_gset:N = \g__cjluexam_course_tl,
-  course        .initial:n = \qquad\qquad\qquad,
-  type          .tl_gset:N = \g__cjluexam_type_tl,
-  type          .initial:n = \quad,
-  college       .tl_gset:N = \g__cjluexam_college_tl,
-  teacher       .tl_gset:N = \g__cjluexam_teacher_tl,
-  openbook      .bool_gset:N  = \g__cjluexam_openbook_bool,
-  openbook      .initial:n    = false,
-  seat          .bool_gset:N  = \g__cjluexam_seat_bool,
-  seat          .initial:n    = false,
-  class         .tl_gset:N = \g__cjluexam_class_tl,
-  classroom     .tl_gset:N = \g__cjluexam_classroom_tl,
-  carryon       .tl_gset:N = \g__cjluexam_carryon_tl,
-  testdate      .tl_gset:N = \g__cjluexam_testdate_tl,
-  testyear      .tl_gset:N = \g__cjluexam_testyear_tl,
-  testmonth     .tl_gset:N = \g__cjluexam_testmonth_tl,
-  testday       .tl_gset:N = \g__cjluexam_testday_tl,
-  testtime      .tl_gset:N = \g__cjluexam_testtime_tl,
+  answer       .bool_gset:N = \g__cjluexam_answer_bool,
+  answer       .initial:n   = false,
+  english      .bool_gset:N = \g__cjluexam_english_bool,
+  english      .initial:n   = false,
+  academicyear .tl_gset:N   = \g__cjluexam_academicyear_tl,
+  academicyear .initial:n   = {20\underline{\qquad}\~{}20\underline{\qquad}},
+  term         .tl_gset:N   = \g__cjluexam_term_tl,
+  term         .initial:n   = \underline{\quad},
+  course       .tl_gset:N   = \g__cjluexam_course_tl,
+  course       .initial:n   = \hspace{6em},
+  type         .tl_gset:N   = \g__cjluexam_type_tl,
+  type         .initial:n   = \quad,
+  college      .tl_gset:N   = \g__cjluexam_college_tl,
+  teacher      .tl_gset:N   = \g__cjluexam_teacher_tl,
+  openbook     .bool_gset:N = \g__cjluexam_openbook_bool,
+  openbook     .initial:n   = false,
+  seat         .bool_gset:N = \g__cjluexam_seat_bool,
+  seat         .initial:n   = false,
+  class        .tl_gset:N   = \g__cjluexam_class_tl,
+  classroom    .tl_gset:N   = \g__cjluexam_classroom_tl,
+  carryon      .tl_gset:N   = \g__cjluexam_carryon_tl,
+  testdate     .tl_gset:N   = \g__cjluexam_testdate_tl,
+  testyear     .tl_gset:N   = \g__cjluexam_testyear_tl,
+  testmonth    .tl_gset:N   = \g__cjluexam_testmonth_tl,
+  testday      .tl_gset:N   = \g__cjluexam_testday_tl,
+  testtime     .tl_gset:N   = \g__cjluexam_testtime_tl,
 }
 \NewDocumentCommand \cjluexamset { m } { \keys_set:nn { cjluexam } { #1 } }
 \PassOptionsToPackage{no-math}{fontspec}
@@ -109,7 +109,7 @@
   \cs_new:Nn \__cjluexam_binding:
   { \int_if_odd:nT { \value{page} } { \__cjluexam_drawbinding:n{-1} } }
 \fi
-\RequirePackage{graphicx,tikz}
+\RequirePackage{tikz,graphicx}
 \cs_new:Nn \__cjluexam_drawbinding:n
 {
   \begin{tikzpicture}[remember~picture,overlay]
@@ -293,7 +293,6 @@
     \end{tabularx}
   }
 }
-\RequirePackage{tikz}
 \cs_new:Nn \__cjluexam_seat:
 {
   \begin{tikzpicture}
@@ -310,11 +309,11 @@
   {
     name={,、},
     number=\chinese{section},
-    format={},
+    format=\sffamily,
     aftername={},
     aftertitle={},
-    beforeskip=1ex plus .5ex minus .5ex,
-    afterskip =1ex plus .5ex minus .5ex,
+    beforeskip=.5ex plus .5ex minus .5ex,
+    afterskip =.5ex plus .5ex minus .5ex,
   }
 }
 \RequirePackage[inline]{enumitem}
@@ -344,7 +343,7 @@
 \setlength\floatsep    {.75em plus .2em minus .2em}
 \setlength\textfloatsep{.75em plus .2em minus .2em}
 \setlength{\abovecaptionskip}{0em}
-\AtBeginEnvironment{table}{\setlength{\belowcaptionskip}{.5em}}
+\setlength{\belowcaptionskip}{.3em}
 \def\fps@figure{!htb}
 \def\fps@table{!htb}
 \endinput

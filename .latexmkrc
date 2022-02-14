@@ -4,3 +4,4 @@ sub glo2gls{
     system("makeindex -s gglo.ist -o \"$_[0].gls\" \"$_[0].glo\"");
 }
 push @generated_exts, 'glo', 'gls';
+$pdf_mode = 5;
