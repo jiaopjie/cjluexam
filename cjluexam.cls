@@ -6,7 +6,7 @@
 %%
 %% cjluexam.dtx  (with options: `class')
 %% 
-%% Copyright (C) 2021-2022 by jiaopjie
+%% Copyright (C) 2021-2023 by jiaopjie
 %% 
 %% This file may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either
@@ -20,7 +20,7 @@
 %% 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesExplClass{cjluexam}
-  {2022/02/14}{1.1.1}{CJLU Exam Template}
+  {2023/02/05}{1.1.2}{CJLU Exam Template}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions
 \LoadClass{article}
@@ -60,11 +60,12 @@
 \RequirePackage[a4paper,margin=30mm,footskip=6mm]{geometry}
 \RequirePackage{titleps}
 \newpagestyle{main}[\zihao{-5}]
-{\footrule\setfoot{}{\fangsong\c__cjluexam_foot_tl}{}}
+{\footrule\setfoot{}{\c__cjluexam_foot_tl}{}}
 \pagestyle{main}
 \RequirePackage{lastpage}
 \tl_const:Nn \c__cjluexam_foot_tl
 {
+  \fangsong
   \bool_if:NTF \g__cjluexam_answer_bool
   {
     \bool_if:NTF \g__cjluexam_english_bool
@@ -131,21 +132,17 @@
 \RenewDocumentCommand \maketitle {}
 {
   \begin{center}
-    \linespread{1.5} \zihao{4} \bfseries \fangsong
     \c__cjluexam_title_tl
   \end{center}
+  \nointerlineskip
   \begin{flushleft}
-    \linespread{1.5} \zihao{-4}
     \c__cjluexam_info_tl
-    \bool_if:NF \g__cjluexam_answer_bool
-    {
-      \par \__cjluexam_score:
-      \bool_if:NT \g__cjluexam_seat_bool { \__cjluexam_seat: }
-    }
+    \bool_if:NF \g__cjluexam_answer_bool { \__cjluexam_score: }
   \end{flushleft}
 }
 \tl_const:Nn \c__cjluexam_title_tl
 {
+  \linespread{1.5}\zihao{4}\bfseries\fangsong
   \bool_if:NTF \g__cjluexam_answer_bool
   {
     \bool_if:NTF \g__cjluexam_english_bool
@@ -163,6 +160,7 @@
     }
   }
   {
+    \bool_if:NT \g__cjluexam_seat_bool { \__cjluexam_seat: }
     \bool_if:NTF \g__cjluexam_english_bool
     {
       China~Jiliang~University~
@@ -178,18 +176,21 @@
 }
 \tl_const:Nn \c__cjluexam_info_tl
 {
+  \linespread{1.5}\zihao{-4}
   \bool_if:NTF \g__cjluexam_answer_bool
   {
-    \bool_if:NTF \g__cjluexam_english_bool
-    {
-      College:  \Fill[35mm]{ \g__cjluexam_college_tl } \hfill
-      Class:    \Fill[30mm]{ \g__cjluexam_class_tl   } \hfill
-      Teacher:  \Fill[30mm]{ \g__cjluexam_teacher_tl }
-    }
-    {
-      开课二级学院： \Fill[35mm] { \g__cjluexam_college_tl }， \hfill
-      学生班级：     \Fill[21mm] { \g__cjluexam_class_tl   }， \hfill
-      教师：         \Fill[21mm] { \g__cjluexam_teacher_tl }
+    \makebox[\linewidth][l]{
+      \bool_if:NTF \g__cjluexam_english_bool
+      {
+        College:\__cjluexam_fill:nnn{25mm}{}{\g__cjluexam_college_tl}\hfill
+        Class:  \__cjluexam_fill:nnn{25mm}{}{\g__cjluexam_class_tl  }\hfill
+        Teacher:\__cjluexam_fill:nnn{25mm}{}{\g__cjluexam_teacher_tl}
+      }
+      {
+        开课二级学院：\__cjluexam_fill:nnn{20mm}{}{\g__cjluexam_college_tl}\hfill
+        学生班级：    \__cjluexam_fill:nnn{20mm}{}{\g__cjluexam_class_tl  }\hfill
+        教师：        \__cjluexam_fill:nnn{20mm}{}{\g__cjluexam_teacher_tl}
+      }
     }
   }
   {
@@ -211,18 +212,19 @@
         Closed-book~\rule{0.683em}{0.683em}、
         Open-book~  \fbox{\rule[0.683em]{0.683em}{0em}} \\
       }
-      Name:  \Fill[25mm]{} \hfill
-      ID:    \Fill[25mm]{} \hfill
-      Major: \Fill[25mm]{} \hfill
-      Grade: \Fill[25mm]{}
+      Name:  \__cjluexam_fill:nnn{25mm}{}{} \hfill
+      ID:    \__cjluexam_fill:nnn{25mm}{}{} \hfill
+      Major: \__cjluexam_fill:nnn{25mm}{}{} \hfill
+      Grade: \__cjluexam_fill:nnn{25mm}{}{} \\
     }
     {
-      开课二级学院：\Fill[35mm]{ \g__cjluexam_college_tl }， \hfill
+      开课二级学院：
+      \__cjluexam_fill:nnn{30mm}{}{ \g__cjluexam_college_tl   } ， \hfill
       考试时间：
-      \Fill[12mm]{ \g__cjluexam_testyear_tl  } 年
-      \Fill[ 8mm]{ \g__cjluexam_testmonth_tl } 月
-      \Fill[ 8mm]{ \g__cjluexam_testday_tl   } 日
-      \Fill[ 9mm]{ \g__cjluexam_testtime_tl  } 时 \\
+      \__cjluexam_fill:nnn{12mm}{}{ \g__cjluexam_testyear_tl  } 年
+      \__cjluexam_fill:nnn{ 8mm}{}{ \g__cjluexam_testmonth_tl } 月
+      \__cjluexam_fill:nnn{ 8mm}{}{ \g__cjluexam_testday_tl   } 日
+      \__cjluexam_fill:nnn{12mm}{}{ \g__cjluexam_testtime_tl  } 时 \\
       考试形式：
       \bool_if:NTF \g__cjluexam_openbook_bool
       {
@@ -233,11 +235,11 @@
         闭卷~\rule{0.683em}{0.683em}、
         开卷~\fbox{\rule[0.683em]{0.683em}{0em}}，
       } \hfill
-      允许带 \Fill[71mm]{\g__cjluexam_carryon_tl} 入场 \\
-      考生姓名：\Fill[21mm]{} \hfill
-      学号：    \Fill[21mm]{} \hfill
-      专业：    \Fill[21mm]{} \hfill
-      班级：    \Fill[21mm]{}
+      允许带    \__cjluexam_fill:nnn{70mm}{}{\g__cjluexam_carryon_tl} 入场 \\
+      考生姓名：\__cjluexam_fill:nnn{20mm}{}{} \hfill
+      学号：    \__cjluexam_fill:nnn{20mm}{}{} \hfill
+      专业：    \__cjluexam_fill:nnn{20mm}{}{} \hfill
+      班级：    \__cjluexam_fill:nnn{20mm}{}{} \\
     }
   }
 }
@@ -297,7 +299,7 @@
 {
   \begin{tikzpicture}
     [remember~picture,overlay,ampersand~replacement=\&]
-    \zihao{-4}
+    \zihao{-4}\normalfont
     \matrix[nodes={draw,inner~ysep=8pt}]
       at ([shift={(25mm,-25mm)}]current~page.north~west)
       { \node{座位号}; \& \node{\phantom{座位号}}; \\ };
@@ -330,8 +332,8 @@
     \settasks{label=(\Alph*),label-width=1.6em,label-offset=.2em,item-indent=1.8em}
   }
 }
-\setlength\lineskiplimit{.25em}
-\setlength\lineskip     {.25em}
+\setlength\lineskiplimit{.3em}
+\setlength\lineskip     {.3em}
 \AtBeginDocument
 {
   \setlength\abovedisplayskip{.2em plus .2em minus .2em}
@@ -342,10 +344,22 @@
 \setlength\intextsep   {.75em plus .2em minus .2em}
 \setlength\floatsep    {.75em plus .2em minus .2em}
 \setlength\textfloatsep{.75em plus .2em minus .2em}
-\setlength{\abovecaptionskip}{0em}
+\setlength{\abovecaptionskip}{ 0em}
 \setlength{\belowcaptionskip}{.3em}
 \def\fps@figure{!htb}
-\def\fps@table{!htb}
+\def\fps@table {!htb}
+\newcolumntype{C}{>{\(\displaystyle{}}c<{{}\)}}
+\newcolumntype{L}{>{\(\displaystyle{}}l<{{}\)}}
+\newcolumntype{R}{>{\(\displaystyle{}}r<{{}\)}}
+\newcolumntype{Y}{>{\(\displaystyle{}}X<{{}\)}}
+\AtBeginDocument
+{
+  \ProvideDocumentCommand \dif  { } {\mathop{}\!\mathrm{d}}
+  \ProvideDocumentCommand \vare { } {\mathrm{e}}
+  \ProvideDocumentCommand \vari { } {\mathrm{i}}
+  \ProvideDocumentCommand \abs  {m} {\left\vert#1\right\vert}
+  \ProvideDocumentCommand \set  {m} {\left\{#1\right\}}
+}
 \endinput
 %%
 %% End of file `cjluexam.cls'.

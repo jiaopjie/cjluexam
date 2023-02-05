@@ -79,9 +79,9 @@ LaTeX version 2005/12/01 or later.
 %<class>\ProvidesExplClass{cjluexam}
 %<*driver>
 \ProvidesFile{\jobname.dtx}
-          [2022/02/14 v1.1.1  CJLU Exam Template]
+          [2023/02/05 v1.1.2  CJLU Exam Template]
 %</driver>
-%<class>  {2022/02/14}{1.1.1}{CJLU Exam Template}
+%<class>  {2023/02/05}{1.1.2}{CJLU Exam Template}
 %
 %<*driver>
 \documentclass[a4paper]{l3doc}
@@ -169,7 +169,7 @@ LaTeX version 2005/12/01 or later.
 % \changes{v1.0.0}{2021/06/11}{封装为 \cls{\jobname} 文档类}
 % \changes{v1.0.2}{2021/11/29}{更改学期、学院、考试时间的宏名}
 % \changes{v1.0.4}{2021/12/25}{微调 \file{.dtx} 文件结构}
-% \changes{v1.1.0}{2022/01/44}{用 \LaTeX3 重构模板}
+% \changes{v1.1.0}{2022/01/14}{用 \LaTeX3 重构模板}
 %
 % \GetFileInfo{\jobname.dtx}
 %
@@ -180,11 +180,13 @@ LaTeX version 2005/12/01 or later.
 %
 % \section{简介}
 %
+% \changes{v1.1.2}{2023/02/02}{删除试卷格式规范的链接}
+%
 % \cls{\jobname} 是中国计量大学试卷的 \LaTeX{} 模板.
 % 本模板按照《中国计量大学试卷格式》
-% \footnote{\url{http://jwc.cjlu.edu.cn/info/1179/4240.htm}}
+% ^^A\footnote{\url{http://jwc.cjlu.edu.cn/info/1179/4240.htm}}
 % 和《中国计量大学试卷参考答案及评分标准》
-% \footnote{\url{http://jwc.cjlu.edu.cn/info/1179/4241.htm}}
+% ^^A\footnote{\url{http://jwc.cjlu.edu.cn/info/1179/4241.htm}}
 % 及给出的 Word 模板编写.
 % 下载地址如下.
 % \begin{itemize}
@@ -379,7 +381,7 @@ LaTeX version 2005/12/01 or later.
 % \paragraph{题目标题}
 %
 % \opt{section} 标题设置为无衬线字体.
-% 下面第一行可抵消该设置;
+% 下面第一行可清除该设置;
 % 第二行设置标题后不换行, 直接排版后续内容.
 % \begin{latexexample}[moretexcs={\ctexset},emph={[1]section,format,runin}]
 %   \ctexset{section/format={}}
@@ -412,10 +414,9 @@ LaTeX version 2005/12/01 or later.
 %   \begin{syntax}
 %     \tn{Fill} \oarg{长度} \marg{内容}
 %   \end{syntax}
-%   生成指定长度的带下划线的文本.
+%   生成带指定最小长度下划线的文本.
 %   <长度> 的缺省值是 \opt{4em};
-%   <长度> 大于 <内容> 的自然长度时, 文本居中;
-%   否则延长下划线.
+%   <长度> 大于 <内容> 的自然宽度时, 文本居中.
 % \end{function}
 %
 % \paragraph{列表}
@@ -541,7 +542,7 @@ LaTeX version 2005/12/01 or later.
 %    \begin{macrocode}
 \RequirePackage{titleps}
 \newpagestyle{main}[\zihao{-5}]
-{\footrule\setfoot{}{\fangsong\c_@@_foot_tl}{}}
+{\footrule\setfoot{}{\c_@@_foot_tl}{}}
 \pagestyle{main}
 %    \end{macrocode}
 %
@@ -556,6 +557,7 @@ LaTeX version 2005/12/01 or later.
 \RequirePackage{lastpage}
 \tl_const:Nn \c_@@_foot_tl
 {
+  \fangsong
   \bool_if:NTF \g_@@_answer_bool
   {
     \bool_if:NTF \g_@@_english_bool
@@ -640,32 +642,29 @@ LaTeX version 2005/12/01 or later.
 % \subsection{标题}
 %
 % \begin{macro}{\maketitle}
+% \changes{v1.1.2}{2023/01/18}{去掉 \opt{center} 环境与 \opt{flushleft} 环境之间的多余空白}
 % 重定义 \tn{maketitle} 输出标题、试卷信息.
 %    \begin{macrocode}
 \RenewDocumentCommand \maketitle {}
 {
   \begin{center}
-    \linespread{1.5} \zihao{4} \bfseries \fangsong
     \c_@@_title_tl
   \end{center}
+  \nointerlineskip
   \begin{flushleft}
-    \linespread{1.5} \zihao{-4}
     \c_@@_info_tl
-    \bool_if:NF \g_@@_answer_bool
-    {
-      \par \@@_score:
-      \bool_if:NT \g_@@_seat_bool { \@@_seat: }
-    }
+    \bool_if:NF \g_@@_answer_bool { \@@_score: }
   \end{flushleft}
 }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\c_@@_title_tl}
-% 试卷标题内容.
+% 输出试卷标题.
 %    \begin{macrocode}
 \tl_const:Nn \c_@@_title_tl
 {
+  \linespread{1.5}\zihao{4}\bfseries\fangsong
   \bool_if:NTF \g_@@_answer_bool
   {
     \bool_if:NTF \g_@@_english_bool
@@ -683,6 +682,7 @@ LaTeX version 2005/12/01 or later.
     }
   }
   {
+    \bool_if:NT \g_@@_seat_bool { \@@_seat: }
     \bool_if:NTF \g_@@_english_bool
     {
       China~Jiliang~University~
@@ -700,22 +700,27 @@ LaTeX version 2005/12/01 or later.
 % \end{macro}
 %
 % \begin{macro}{\c_@@_info_tl}
+% \changes{v1.1.2}{2023/01/18}{微调下划线长度并禁止参考答案的信息区换行}
+% \changes{v1.1.2}{2023/02/05}{将 \tn{Fill} 替换为 \tn{__cjluexam_fill:nnn}}
 % 试卷信息.
 %    \begin{macrocode}
 \tl_const:Nn \c_@@_info_tl
 {
+  \linespread{1.5}\zihao{-4}
   \bool_if:NTF \g_@@_answer_bool
   {
-    \bool_if:NTF \g_@@_english_bool
-    {
-      College:  \Fill[35mm]{ \g_@@_college_tl } \hfill
-      Class:    \Fill[30mm]{ \g_@@_class_tl   } \hfill
-      Teacher:  \Fill[30mm]{ \g_@@_teacher_tl }
-    }
-    {
-      开课二级学院： \Fill[35mm] { \g_@@_college_tl }， \hfill
-      学生班级：     \Fill[21mm] { \g_@@_class_tl   }， \hfill
-      教师：         \Fill[21mm] { \g_@@_teacher_tl }
+    \makebox[\linewidth][l]{
+      \bool_if:NTF \g_@@_english_bool
+      {
+        College:\@@_fill:nnn{25mm}{}{\g_@@_college_tl}\hfill
+        Class:  \@@_fill:nnn{25mm}{}{\g_@@_class_tl  }\hfill
+        Teacher:\@@_fill:nnn{25mm}{}{\g_@@_teacher_tl}
+      }
+      {
+        开课二级学院：\@@_fill:nnn{20mm}{}{\g_@@_college_tl}\hfill
+        学生班级：    \@@_fill:nnn{20mm}{}{\g_@@_class_tl  }\hfill
+        教师：        \@@_fill:nnn{20mm}{}{\g_@@_teacher_tl}
+      }
     }
   }
   {
@@ -737,18 +742,19 @@ LaTeX version 2005/12/01 or later.
         Closed-book~\rule{0.683em}{0.683em}、
         Open-book~  \fbox{\rule[0.683em]{0.683em}{0em}} \\
       }
-      Name:  \Fill[25mm]{} \hfill
-      ID:    \Fill[25mm]{} \hfill
-      Major: \Fill[25mm]{} \hfill
-      Grade: \Fill[25mm]{}
+      Name:  \@@_fill:nnn{25mm}{}{} \hfill
+      ID:    \@@_fill:nnn{25mm}{}{} \hfill
+      Major: \@@_fill:nnn{25mm}{}{} \hfill
+      Grade: \@@_fill:nnn{25mm}{}{} \\
     }
     {
-      开课二级学院：\Fill[35mm]{ \g_@@_college_tl }， \hfill
+      开课二级学院：
+      \@@_fill:nnn{30mm}{}{ \g_@@_college_tl   } ， \hfill
       考试时间：
-      \Fill[12mm]{ \g_@@_testyear_tl  } 年
-      \Fill[ 8mm]{ \g_@@_testmonth_tl } 月
-      \Fill[ 8mm]{ \g_@@_testday_tl   } 日
-      \Fill[ 9mm]{ \g_@@_testtime_tl  } 时 \\
+      \@@_fill:nnn{12mm}{}{ \g_@@_testyear_tl  } 年
+      \@@_fill:nnn{ 8mm}{}{ \g_@@_testmonth_tl } 月
+      \@@_fill:nnn{ 8mm}{}{ \g_@@_testday_tl   } 日
+      \@@_fill:nnn{12mm}{}{ \g_@@_testtime_tl  } 时 \\
       考试形式：
       \bool_if:NTF \g_@@_openbook_bool
       {
@@ -759,11 +765,11 @@ LaTeX version 2005/12/01 or later.
         闭卷~\rule{0.683em}{0.683em}、
         开卷~\fbox{\rule[0.683em]{0.683em}{0em}}，
       } \hfill
-      允许带 \Fill[71mm]{\g_@@_carryon_tl} 入场 \\
-      考生姓名：\Fill[21mm]{} \hfill
-      学号：    \Fill[21mm]{} \hfill
-      专业：    \Fill[21mm]{} \hfill
-      班级：    \Fill[21mm]{}
+      允许带    \@@_fill:nnn{70mm}{}{\g_@@_carryon_tl} 入场 \\
+      考生姓名：\@@_fill:nnn{20mm}{}{} \hfill
+      学号：    \@@_fill:nnn{20mm}{}{} \hfill
+      专业：    \@@_fill:nnn{20mm}{}{} \hfill
+      班级：    \@@_fill:nnn{20mm}{}{} \\
     }
   }
 }
@@ -771,10 +777,12 @@ LaTeX version 2005/12/01 or later.
 % \end{macro}
 %
 % \begin{macro}{\@@_fill:nnn}
-% 指定长度的文本.
-% 参数 \opt{\#1} 是指定长度,
-% 参数 \opt{\#2} 是前置文本,
-% 参数 \opt{\#3} 是下划线文本.
+% 指定最小总宽度的文本.
+% \opt{\#1} 是指定宽度,
+% \opt{\#2} 是前置文本,
+% \opt{\#3} 是带下划线的文本.
+% \opt{\#1} 大于 \opt{\#2} 和 \opt{\#3} 的总宽度时, \opt{\#3} 居中,
+% 下划线的长度是 \opt{\#1} 减去 \opt{\#2} 的宽度.
 %    \begin{macrocode}
 \cs_new_protected:Nn \@@_fill:nnn
 {
@@ -791,10 +799,11 @@ LaTeX version 2005/12/01 or later.
 % \end{macro}
 %
 % \begin{macro}{\Fill}
-% 指定长度的带下划线文本.
-% 文本长度小于指定长度时, 文本居中; 否则延长下划线.
-% 参数 \opt{\#1} 是下划线的指定长度,
-% 参数 \opt{\#2} 是指定的文本.
+% \changes{v1.1.0}{2022/01/14}{参数 \opt{\#1} 改为可选参数}
+% 带指定最小长度下划线的文本.
+% \opt{\#1} 是指定长度,
+% \opt{\#2} 是指定文本.
+% \opt{\#1} 大于 \opt{\#2} 的宽度时, \opt{\#2} 居中.
 %    \begin{macrocode}
 \NewDocumentCommand \Fill { O{4em} m }
 {
@@ -806,7 +815,7 @@ LaTeX version 2005/12/01 or later.
 %    \end{macrocode}
 % \end{macro}
 %
-% \changes{v1.0.2}{2021/11/16}{定义列格式说明符简化操作}
+% \changes{v1.0.2}{2021/11/16}{定义列格式说明符简化得分栏表格的输出}
 %
 % \begin{macro}{\@@_score:}
 % 得分栏. 列数会根据 \opt{section} 计数器自动调整.
@@ -855,7 +864,7 @@ LaTeX version 2005/12/01 or later.
 {
   \begin{tikzpicture}
     [remember~picture,overlay,ampersand~replacement=\&]
-    \zihao{-4}
+    \zihao{-4}\normalfont
     \matrix[nodes={draw,inner~ysep=8pt}]
       at ([shift={(25mm,-25mm)}]current~page.north~west)
       { \node{座位号}; \& \node{\phantom{座位号}}; \\ };
@@ -913,10 +922,12 @@ LaTeX version 2005/12/01 or later.
 %
 % \subsection{其他}
 %
+% \changes{v1.1.2}{2023/02/02}{微调两行之间的最小空白}
+%
 % 两行之间的最小空白.
 %    \begin{macrocode}
-\setlength\lineskiplimit{.25em}
-\setlength\lineskip     {.25em}
+\setlength\lineskiplimit{.3em}
+\setlength\lineskip     {.3em}
 %    \end{macrocode}
 %
 % \changes{v1.0.3}{2021/12/12}{调整显式公式前后的空白}
@@ -939,7 +950,7 @@ LaTeX version 2005/12/01 or later.
 \setlength\intextsep   {.75em plus .2em minus .2em}
 \setlength\floatsep    {.75em plus .2em minus .2em}
 \setlength\textfloatsep{.75em plus .2em minus .2em}
-\setlength{\abovecaptionskip}{0em}
+\setlength{\abovecaptionskip}{ 0em}
 \setlength{\belowcaptionskip}{.3em}
 %    \end{macrocode}
 %
@@ -948,7 +959,36 @@ LaTeX version 2005/12/01 or later.
 % 浮动体默认的位置选项.
 %    \begin{macrocode}
 \def\fps@figure{!htb}
-\def\fps@table{!htb}
+\def\fps@table {!htb}
+%    \end{macrocode}
+%
+% \changes{v1.0.4}{2021/12/25}{定义表格的列格式说明符}
+% \changes{v1.1.0}{2022/01/14}{删除表格的列格式说明符}
+% \changes{v1.1.2}{2023/02/02}{定义表格的列格式说明符}
+%
+% 表格的列格式说明符, 分别对应 c,l,r,X, 确保进入显式公式模式.
+%    \begin{macrocode}
+\newcolumntype{C}{>{\(\displaystyle{}}c<{{}\)}}
+\newcolumntype{L}{>{\(\displaystyle{}}l<{{}\)}}
+\newcolumntype{R}{>{\(\displaystyle{}}r<{{}\)}}
+\newcolumntype{Y}{>{\(\displaystyle{}}X<{{}\)}}
+%    \end{macrocode}
+%
+% \changes{v1.0.4}{2021/12/25}{定义宏 \tn{cdotfill} 输出居中的点作为前导符}
+% \changes{v1.1.0}{2022/01/14}{删除宏 \tn{cdotfill}}
+%
+% \changes{v1.1.2}{2023/02/03}{定义一些常用的宏}
+%
+% 定义一些常用的宏.
+%    \begin{macrocode}
+\AtBeginDocument
+{
+  \ProvideDocumentCommand \dif  { } {\mathop{}\!\mathrm{d}}
+  \ProvideDocumentCommand \vare { } {\mathrm{e}}
+  \ProvideDocumentCommand \vari { } {\mathrm{i}}
+  \ProvideDocumentCommand \abs  {m} {\left\vert#1\right\vert}
+  \ProvideDocumentCommand \set  {m} {\left\{#1\right\}}
+}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
