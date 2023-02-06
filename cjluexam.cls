@@ -20,7 +20,7 @@
 %% 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesExplClass{cjluexam}
-  {2023/02/05}{1.1.2}{CJLU Exam Template}
+  {2023/02/06}{1.1.3}{CJLU Exam Template}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions
 \LoadClass{article}
@@ -320,6 +320,7 @@
 }
 \RequirePackage[inline]{enumitem}
 \setlist{nosep,leftmargin=*}
+\setlist[enumerate,2]{label=(\arabic*)}
 \RequirePackage{tasks}
 \settasks{before-skip=0pt,after-skip=0pt,after-item-skip=0pt}
 \AtBeginDocument

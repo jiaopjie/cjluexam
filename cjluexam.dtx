@@ -79,9 +79,9 @@ LaTeX version 2005/12/01 or later.
 %<class>\ProvidesExplClass{cjluexam}
 %<*driver>
 \ProvidesFile{\jobname.dtx}
-          [2023/02/05 v1.1.2  CJLU Exam Template]
+          [2023/02/06 v1.1.3  CJLU Exam Template]
 %</driver>
-%<class>  {2023/02/05}{1.1.2}{CJLU Exam Template}
+%<class>  {2023/02/06}{1.1.3}{CJLU Exam Template}
 %
 %<*driver>
 \documentclass[a4paper]{l3doc}
@@ -897,11 +897,13 @@ LaTeX version 2005/12/01 or later.
 % \subsection{列表}
 %
 % \changes{v1.0.3}{2021/12/12}{设置列表环境}
+% \changes{v1.1.3}{2023/02/06}{设置二级有序列表标签}
 %
 % 载入 \pkg{enumitem} 宏包设置列表环境.
 %    \begin{macrocode}
 \RequirePackage[inline]{enumitem}
 \setlist{nosep,leftmargin=*}
+\setlist[enumerate,2]{label=(\arabic*)}
 %    \end{macrocode}
 %
 % 选择题的选项可使用 \env{tasks} 环境.
