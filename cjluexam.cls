@@ -20,7 +20,7 @@
 %% 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesExplClass{cjluexam}
-  {2023/03/01}{1.2.0}{CJLU Exam Template}
+  {2023/03/08}{1.2.0}{CJLU Exam Template}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions
 \LoadClass{article}
